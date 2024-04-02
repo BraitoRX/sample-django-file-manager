@@ -1,0 +1,56 @@
+{% extends 'layouts/base.html' %}
+{% load static file_extension info_value %}
+
+{% block extrastyle %}
+<style>
+  .modal {
+    z-index: 99999 !important;
+  }
+</style>
+{% endblock extrastyle %}
+
+{% block content %}
+
+
+{% if files %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <h2 class="text-center mb-4">Archivos</h2>
+            <div class="list-group">
+                {% for file in files %}
+                <a href="{% url 'file_detail' file.file %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    {{ file.filename }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if file_path %}
+    <!-- Código para mostrar un solo archivo -->
+    {% if file_name|file_extension in ".jpg, .png, .gif" %}
+    <img  src="/media/{{ file_path }}" alt="df">
+  {% elif file_name|file_extension in ".mp4, .webm, .ogg" %}
+    <video controls>
+      <source src="/media/{{ file_path }}" type="video/mp4">
+    </video>
+  {% elif file_name|file_extension in ".pdf, .txt" %}
+    <iframe src="/media/{{  file_path }}" ></iframe>
+    {% elif file_name|file_extension in ".csv" %}
+    <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
+  {% endif %}
+
+{% endif %}
+
+{% endblock content %}
+
+{% block extrascripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    $('#fileModal').modal('show');
+  });
+</script>
+{% endblock extrascripts %}

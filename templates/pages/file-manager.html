@@ -24,49 +24,7 @@
 {% block content %}
 <div class="container-fluid py-4 px-5">
   <div class="row">
-    <div class="col-lg-3 border py-2">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          {% for breadcrumb in breadcrumbs %}
-            {% if forloop.last %}
-              <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
-            {% else %}
-              {% if breadcrumb.name|lower == 'media' %}
-                <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb.name }}</li>
-              {% else %}
-                <li class="breadcrumb-item"><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        </ol>
-      </nav>
-      <ul class="">
-        {% for directory in directories %}
-          {% if directory.directories %}
-          <li class="">
-            <i class="fa-solid fa-folder"></i>
-            <a 
-              data-bs-toggle="collapse" 
-              href="#collapse{{directory.id}}" 
-              role="button" 
-              aria-expanded="false"
-              aria-controls="collapse{{directory.id}}"
-              onclick="window.location.href = '{% url 'file_manager' directory.path|encoded_path %}';"
-            >
-              {{ directory.name }}
-            </a>
-          </li>
-          {% include 'includes/subdirectories.html' with directory=directory depth=depth|add:"3" %}
-        {% else %}
-          <li>
-            <i class="fa-solid fa-folder"></i>
-            <a href="{% url 'file_manager' directory.path|encoded_path %}">{{ directory.name }}</a>
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
-    <div class="col-lg-9 border py-2">
+    <div class="col-12 border py-2">
       <div class="d-flex justify-content-start mb-3">
         <label for="fileInput">
           <i class="fa-solid fa-upload text-primary fs-3"></i>
@@ -110,8 +68,8 @@
                 </div>
               </td>
             </tr>
-            <!-- Modal -->
-            <div class="modal fade" id="file-{{forloop.counter}}" data-bs-backdrop="static" data-bs-keyboard="false"
+            <!-- Modal content remains unchanged -->
+                        <div class="modal fade" id="file-{{forloop.counter}}" data-bs-backdrop="static" data-bs-keyboard="false"
               tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-xl">
                 <div class="modal-content">
@@ -192,12 +150,10 @@
       {% endif %}
     </div>
   </div>
-
 </div>
 {% endblock content %}
 
 {% block extrascripts %}
-
 <script>
   function submitForm() {
     document.getElementById("upload-file").submit();
@@ -213,5 +169,4 @@
     }
   })
 </script>
-
 {% endblock extrascripts %}
