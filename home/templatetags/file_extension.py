@@ -17,3 +17,7 @@ def encoded_file_path(path):
 @register.filter
 def encoded_path(path):
     return path.replace('\\', '/')
+
+@register.filter(name='is_image')
+def is_image(filename):
+    return filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))

@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, FileResponse, Http404
 from django.conf import settings
 from home.models import FileInfo
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -18,6 +19,9 @@ def index(request):
     # Page from the theme 
 
     return render(request, 'pages/file-manager.html', context=context)
+
+
+
 
 def convert_csv_to_text(csv_file_path):
     with open(csv_file_path, 'r') as file:
@@ -85,17 +89,23 @@ def file_manager(request, directory=''):
     directories = generate_nested_directory(media_path, media_path)
     selected_directory = directory
 
-    files = []
+    # Obtiene todos los archivos del directorio seleccionado
     selected_directory_path = os.path.join(media_path, selected_directory)
-
     if os.path.isdir(selected_directory_path):
-        files = get_files_from_directory(selected_directory_path)
+        all_files = get_files_from_directory(selected_directory_path)
+    else:
+        all_files = []
+
+    # Configura la paginación
+    paginator = Paginator(all_files, 10)  # Muestra 10 archivos por página
+    page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
+    page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
 
     breadcrumbs = get_breadcrumbs(request)
 
     context = {
-        'directories': directories, 
-        'files': files, 
+        'directories': directories,
+        'page_obj': page_obj,
         'selected_directory': selected_directory,
         'segment': 'file_manager',
         'breadcrumbs': breadcrumbs
