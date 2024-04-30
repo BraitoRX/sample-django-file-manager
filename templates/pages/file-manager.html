@@ -82,7 +82,7 @@
 
 {% block content %}
 
-{% if directories %}
+{% if not file_name %}
 <div class="container-fluid py-4 px-5">
   <div class="file-grid">
     {% for file in page_obj %}
@@ -125,10 +125,6 @@
         <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
       {% endif %}
     </div>
-
-
-
-
     
       <div class="directory-list">
       <h3>Carpetas</h3>
