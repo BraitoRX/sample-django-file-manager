@@ -166,6 +166,14 @@ def file_manager(request, file_path=None):
         page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
         page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
 
+        for archivo in archivos:
+            if archivo['file_extension'] in [".png",".jpg",".jpeg",".gif"]:
+                local_file_name = os.path.basename(archivo['file'])
+                file_extension = archivo['file_extension']
+                absolute_file_path = os.path.join(temp_dir_path, local_file_name)
+                # hdfs.get(archivo['file'], absolute_file_path)
+                relative_file_path = os.path.join('Temp', local_file_name)
+                archivo['temp'] = relative_file_path
         print(' > archivos ' + str(archivos))
 
         return render(request, 'pages/file-manager.html', {'files': archivos, 'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
