@@ -74,6 +74,30 @@
     padding: 5px 10px;
     font-size: 0.875rem;
   }
+
+
+  .file-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Ajusta esto según tus necesidades */
+    padding: 20px;
+  }
+  .file-viewer img {
+    max-width: 80%; /* Evita que la imagen sea demasiado grande */
+    max-height: 80vh; /* Mantiene la imagen dentro de una vista razonable */
+    object-fit: contain; /* Muestra toda la imagen ajustada al contenedor */
+  }
+  .file-viewer video, .file-viewer iframe {
+    max-width: 80%;
+    height: 80vh; /* Ajusta la altura del video y el iframe */
+  }
+  .file-viewer pre {
+    max-width: 80%;
+    overflow: auto; /* Asegura que el contenido extenso sea scrollable */
+    border: 1px solid #ccc; /* Añade un borde ligero para el área de texto */
+    border-radius: 4px; /* Bordes redondeados para un aspecto suave */
+  }
 </style>
 {% endblock %}
 
@@ -149,9 +173,33 @@
           <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
         {% endif %}
       </div>
-    {% endif %}
-    
 
+      {% else %}
+      
+      <div class="container">
+        <div class="file-viewer">
+          {% if file_path %}
+            <!-- Código para mostrar un solo archivo -->
+            {% if file_name|file_extension in ".jpg, .png, .gif" %}
+            <img src="/media/{{ file_path }}" alt="{{ file_name }}">
+            {% elif file_name|file_extension in ".mp4, .webm, .ogg" %}
+            <video controls>
+              <source src="/media/{{ file_path }}" type="video/mp4">
+            </video>
+            {% elif file_name|file_extension in ".pdf, .txt" %}
+            <iframe src="/media/{{ file_path }}" frameborder="0"></iframe>
+            {% elif file_name|file_extension in ".csv" %}
+            <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
+            {% endif %}
+          {% else %}
+            <p>No file selected.</p>
+          {% endif %}
+        </div>
+      </div>
+    
+      {% endif %}
+    
+    
 
 
 
