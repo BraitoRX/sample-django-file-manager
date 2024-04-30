@@ -174,7 +174,7 @@ def file_manager(request, file_path=None):
                 archivo['temp'] = relative_file_path
 
         paginator_dir = Paginator(directorios, 10)
-        paginator_page_number_dir = request.GET.get('page', 1)  # Obtiene el número de página de GET request
+        paginator_page_number_dir = request.GET.get('page_dir', 1)  # Obtiene el número de página de GET request
         page_obj_dir = paginator_dir.get_page(paginator_page_number_dir)  # Obtiene los objetos para la página actual
 
         for directorio in directorios:

@@ -132,16 +132,16 @@
     <p>No directories found.</p>
     {% endfor %}
   </div>
-  
+
   <div class="pagination">
     {% if page_obj_dir.has_previous %}
-      <a href="?page=1">Primera</a>
-      <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+      <a href="?page_dir=1">Primera</a>
+      <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
     {% endif %}
     <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
     {% if page_obj_dir.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+      <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
+      <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
     {% endif %}
   </div>
 
