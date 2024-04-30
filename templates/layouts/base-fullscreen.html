@@ -30,9 +30,9 @@
     {% block content %}{% endblock content %}
   </div>
   
-  {% block fixed_plugin %}
+  {% comment %} {% block fixed_plugin %}
     {% include 'includes/fixed_plugin.html' %}
-  {% endblock fixed_plugin %}
+  {% endblock fixed_plugin %} {% endcomment %}
 
   {% include 'includes/scripts.html' %}
   {% block extrascripts %}{% endblock extrascripts %}
