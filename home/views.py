@@ -169,8 +169,6 @@ def file_manager(request, file_path=None):
     # Si es un directorio, obtén los archivos y directorios dentro de él
     if file_info['kind'] == 'directory':
         archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
-
-        archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
         paginator = Paginator(archivos, 10)
         page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
         page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
