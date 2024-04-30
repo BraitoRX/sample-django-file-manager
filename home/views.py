@@ -195,7 +195,7 @@ def file_manager(request, file_path=None):
                     local_file_name = os.path.basename(archivo['file'])
                     file_extension = archivo['file_extension']
                     absolute_file_path = os.path.join(temp_dir_path, local_file_name)
-                    # hdfs.get(archivo['file'], absolute_file_path)
+                    hdfs.get(archivo['file'], absolute_file_path)
                     relative_file_path = os.path.join('Temp', local_file_name)
                     archivo['temp'] = relative_file_path
                     print(' > archivo ' + str(archivo))
