@@ -176,7 +176,7 @@ def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, r
     return archivos, directorios, page_obj_dir, page_obj
 
 
-def file_manager(request, file_path=None):
+def file_manager(request, file_path=None, directory = None):
     hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
 
     # Crea el directorio 'Temp' dentro de MEDIA_ROOT si no existe
@@ -185,7 +185,7 @@ def file_manager(request, file_path=None):
         os.makedirs(temp_dir_path)
 
     # Si no hay una ruta de archivo especificada, muestra el directorio raíz
-    if file_path is None:
+    if file_path is None or directory:
         archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
         archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request)
         return render(request, 'pages/file-manager.html', {'directories': directorios,"page_obj_dir":page_obj_dir,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
