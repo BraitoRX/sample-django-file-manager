@@ -103,10 +103,10 @@
         </span>
       </div>
     </div>
-    {% endfor %}
     {% empty %}
     <p>No hay archivos</p>
     {% endfor %}
+
 
   </div>
   
@@ -132,7 +132,7 @@
       <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Open</a>
     </div>
     {% empty %}
-    <p>No hay directorios</p>
+    <p>
     {% endfor %}
   </div>
 
