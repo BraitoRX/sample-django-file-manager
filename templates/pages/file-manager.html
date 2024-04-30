@@ -68,14 +68,14 @@
   <div class="file-grid">
     {% for file in page_obj %}
     <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
-      <input type="checkbox" class="check-button"> <!-- Checkbox para seleccionar archivos -->
+      <input type="checkbox" class="check-button"> 
       <div>
         <strong>File: </strong>{{ file.filename }}
         <div><strong>Type: </strong>{{ file.filename|file_extension|upper }}</div>
       </div>
       <div class="file-preview">
         {% if file.filename|is_image %}
-        <img src="/media/{{ file.file }}" alt="{{ file.filename }}" class="file-image">
+        <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
         {% else %}
         <span>Non-image file</span>
         {% endif %}
