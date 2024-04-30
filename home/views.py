@@ -173,7 +173,7 @@ def file_manager(request, file_path=None):
                 relative_file_path = os.path.join('Temp', local_file_name)
                 archivo['temp'] = relative_file_path
         for directorio in directorios:
-            path = os.path.join(normalized_file_path, directorio['name'])
+            path = os.path.join("/", directorio['name'])
             directorio['path'] = path
             
         return render(request, 'pages/file-manager.html', {'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
