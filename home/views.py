@@ -13,11 +13,6 @@ from hdfs3 import HDFileSystem
 # Create your views here.
 
 def index(request):
-
-
-    # Add context data here 
-    # context['test'] = 'OK'  
-    # Page from the theme 
     return redirect('file_manager')
 
 
