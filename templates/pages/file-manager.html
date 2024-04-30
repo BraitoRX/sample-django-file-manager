@@ -133,7 +133,7 @@
         <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
           <i class="fa-solid fa-info text-success"></i>
         </span>
-        <span class="icon" data-bs-toggle="modal" data-bs-target="#view-{{forloop.counter}}">
+        <span class="icon" href="{% url 'file_manager' file.file_path %}" data-bs-toggle="modal" data-bs-target="#view-{{forloop.counter}}">
           <i class="fa-solid fa-eye text-primary"></i>
         </span>
       </div>

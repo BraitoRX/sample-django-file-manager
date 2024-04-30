@@ -160,6 +160,7 @@ def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, r
             hdfs.get(archivo['file'], absolute_file_path)
             relative_file_path = os.path.join('Temp', local_file_name)
             archivo['temp'] = relative_file_path
+            
 
     paginator_dir = Paginator(directorios, 5)
     paginator_page_number_dir = request.GET.get('page_dir', 1)  
