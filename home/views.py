@@ -6,16 +6,17 @@ from django.http import HttpResponse, FileResponse, Http404
 from django.conf import settings
 from home.models import FileInfo
 
+
 # Create your views here.
 
 def index(request):
 
     context = {}
 
-    # Add context data here
-    # context['test'] = 'OK'
-
+    # Add context data here 
+    # context['test'] = 'OK'  
     # Page from the theme 
+
     return render(request, 'pages/dashboard.html', context=context)
 
 def convert_csv_to_text(csv_file_path):

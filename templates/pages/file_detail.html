@@ -12,7 +12,7 @@
 {% block content %}
 
 
-{% if files %}
+{% if files || directories %}
 <div class="container">
     <div class="row">
         <div class="col-md-6 mx-auto">
@@ -31,15 +31,15 @@
 
 {% if file_path %}
     <!-- Código para mostrar un solo archivo -->
-    {% if file_name|file_extension in ".jpg, .png, .gif" %}
+  {% if file_extension in ".jpg, .png, .gif" %}
     <img  src="/media/{{ file_path }}" alt="df">
-  {% elif file_name|file_extension in ".mp4, .webm, .ogg" %}
+  {% elif file_extension in ".mp4, .webm, .ogg" %}
     <video controls>
-      <source src="/media/{{ file_path }}" type="video/mp4">
+      <source src="/media/{{file_path }}" type="video/mp4">
     </video>
-  {% elif file_name|file_extension in ".pdf, .txt" %}
-    <iframe src="/media/{{  file_path }}" ></iframe>
-    {% elif file_name|file_extension in ".csv" %}
+  {% elif file_extension in ".pdf, .txt" %}
+    <iframe src="/media/{{ file_path }}" ></iframe>
+  {% elif file_extension in ".csv" %}
     <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
   {% endif %}
 

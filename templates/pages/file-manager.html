@@ -127,18 +127,6 @@
                       <i class="fa-solid fa-circle-xmark fs-5"></i>
                     </div>
                   </div>
-                  <div class="modal-body">
-                    <form action="{% url 'save_info' file.file_path|encoded_file_path %}" method="post">
-                      {% csrf_token %}
-                      <div class="form-group mb-2">
-                        <label for="" class="form-label">File Info</label>
-                        <input type="text" value="{{file.file_path|info_value}}" name="info" id="" class="form-control">
-                      </div>
-                      <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
-                      </div>
-                    </form>
-                  </div>
                 </div>
               </div>
             </div>
