@@ -5,7 +5,7 @@
 <style>
   .file-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajusta el tamaño de la columna aquí */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     padding: 20px;
   }
@@ -13,12 +13,12 @@
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
-    position: relative; /* Para posicionar el checkbox y botón */
+    position: relative;
   }
   .file-image {
     max-width: 100%;
     height: auto;
-    margin-bottom: 10px; /* Espacio entre la imagen y las acciones */
+    margin-bottom: 10px;
   }
   .actions {
     display: flex;
@@ -32,18 +32,33 @@
     display: flex;
     justify-content: center;
   }
-  .pagination a {
-    margin: 0 10px;
-    text-decoration: none;
-    color: blue;
-  }
-  .pagination span {
+  .pagination a, .pagination span {
     margin: 0 10px;
   }
   .check-button {
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+  /* Estilos para el botón "Ver Todos" */
+  .view-all-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF; /* Azul Bootstrap */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra sutil */
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .view-all-btn:hover {
+    background-color: #0056b3; /* Azul más oscuro para el hover */
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15); /* Sombra más pronunciada para el hover */
   }
 </style>
 {% endblock %}
@@ -91,7 +106,7 @@
   </div>
 
   <!-- Botón flotante "Ver Todos" -->
-  <button onclick="viewSelected()" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">Ver Todos los seleccionados</button>
+  <button onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
 </div>
 {% endblock %}
 
@@ -99,7 +114,7 @@
 <script>
 function viewSelected() {
     const selectedFiles = document.querySelectorAll('.check-button:checked');
-    console.log(selectedFiles); // Aquí puedes añadir lógica para hacer algo con los archivos seleccionados
+    console.log(selectedFiles);
 }
 </script>
 {% endblock %}
