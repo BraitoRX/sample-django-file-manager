@@ -148,7 +148,7 @@ def get_breadcrumbs(request):
 
 def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request,initial_path="/"):
 
-    paginator = Paginator(archivos, 10)
+    paginator = Paginator(archivos, 20)
     page_number = request.GET.get('page', 1)  
     page_obj = paginator.get_page(page_number)  
 
@@ -161,7 +161,7 @@ def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, r
             relative_file_path = os.path.join('Temp', local_file_name)
             archivo['temp'] = relative_file_path
 
-    paginator_dir = Paginator(directorios, 10)
+    paginator_dir = Paginator(directorios, 5)
     paginator_page_number_dir = request.GET.get('page_dir', 1)  
     page_obj_dir = paginator_dir.get_page(paginator_page_number_dir)  
 
