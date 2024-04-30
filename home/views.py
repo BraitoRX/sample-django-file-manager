@@ -190,7 +190,7 @@ def file_manager(request, file_path=None):
             file_info = hdfs.info(normalized_file_path)
         except FileNotFoundError:
             raise Http404('El archivo o directorio solicitado no existe.')
-
+        print(file_path + " > " + normalized_file_path)
         if file_info['kind'] == 'directory':
             archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
             archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request,normalized_file_path)
