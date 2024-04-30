@@ -149,8 +149,8 @@ def get_breadcrumbs(request):
 def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request):
 
     paginator = Paginator(archivos, 10)
-    page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
-    page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
+    page_number = request.GET.get('page', 1)  
+    page_obj = paginator.get_page(page_number)  
 
     for archivo in archivos:
         if archivo['file_extension'] in [".png",".jpg",".jpeg",".gif"]:
@@ -162,8 +162,8 @@ def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, r
             archivo['temp'] = relative_file_path
 
     paginator_dir = Paginator(directorios, 10)
-    paginator_page_number_dir = request.GET.get('page_dir', 1)  # Obtiene el número de página de GET request
-    page_obj_dir = paginator_dir.get_page(paginator_page_number_dir)  # Obtiene los objetos para la página actual
+    paginator_page_number_dir = request.GET.get('page_dir', 1)  
+    page_obj_dir = paginator_dir.get_page(paginator_page_number_dir)  
 
     for directorio in directorios:
         path = os.path.join("/", directorio['name'])
@@ -183,7 +183,6 @@ def file_manager(request, file_path=None):
     if file_path is None:
         archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
         archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request)
-
         return render(request, 'pages/file-manager.html', {'directories': directorios,"page_obj_dir":page_obj_dir,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
     else:
         normalized_file_path = file_path.replace('%slash%', '/')
@@ -194,27 +193,7 @@ def file_manager(request, file_path=None):
 
         if file_info['kind'] == 'directory':
             archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
-            paginator = Paginator(archivos, 10)
-            page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
-            page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
-
-            for archivo in archivos:
-                if archivo['file_extension'] in [".png",".jpg",".jpeg",".gif"]:
-                    local_file_name = os.path.basename(archivo['file'])
-                    file_extension = archivo['file_extension']
-                    absolute_file_path = os.path.join(temp_dir_path, local_file_name)
-                    hdfs.get(archivo['file'], absolute_file_path)
-                    relative_file_path = os.path.join('Temp', local_file_name)
-                    archivo['temp'] = relative_file_path
-
-            paginator_dir = Paginator(directorios, 10)
-            paginator_page_number_dir = request.GET.get('page_dir', 1)  # Obtiene el número de página de GET request
-            page_obj_dir = paginator_dir.get_page(paginator_page_number_dir)  # Obtiene los objetos para la página actual
-
-            for directorio in directorios:
-                path = os.path.join("/", directorio['name'])
-                directorio['path'] = path
-                
+            archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request)
             return render(request, 'pages/file-manager.html', {'directories': directorios,"page_obj_dir":page_obj_dir,'selected_directory': normalized_file_path,'page_obj': page_obj,'segment': 'file_manager'})
         
 
