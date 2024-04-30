@@ -196,6 +196,7 @@ def file_manager(request, file_path=None):
             archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request,normalized_file_path)
             return render(request, 'pages/file-manager.html', {'directories': directorios,"page_obj_dir":page_obj_dir,'selected_directory': normalized_file_path,'page_obj': page_obj,'segment': 'file_manager'})
         else:
+            print(normalized_file_path)
             local_file_name = os.path.basename(normalized_file_path)
             file_extension = os.path.splitext(local_file_name)[1]
             # Ruta absoluta en el servidor donde se guardará temporalmente el archivo

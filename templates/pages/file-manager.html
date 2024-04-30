@@ -175,19 +175,19 @@
       </div>
 
       {% else %}
-      
+
       <div class="container">
         <div class="file-viewer">
           {% if file_path %}
             <!-- Código para mostrar un solo archivo -->
             {% if file_name|file_extension in ".jpg, .png, .gif" %}
-            <img src="/media/{{ file_path }}" alt="{{ file_name }}">
+            <img src="/media/{{ temp }}" alt="{{ file_name }}">
             {% elif file_name|file_extension in ".mp4, .webm, .ogg" %}
             <video controls>
-              <source src="/media/{{ file_path }}" type="video/mp4">
+              <source src="/media/{{ temp }}" type="video/mp4">
             </video>
             {% elif file_name|file_extension in ".pdf, .txt" %}
-            <iframe src="/media/{{ file_path }}" frameborder="0"></iframe>
+            <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
             {% elif file_name|file_extension in ".csv" %}
             <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
             {% endif %}
