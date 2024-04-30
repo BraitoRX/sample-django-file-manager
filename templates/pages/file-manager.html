@@ -60,6 +60,20 @@
     background-color: #0056b3; /* Azul más oscuro para el hover */
     box-shadow: 0 6px 10px rgba(0,0,0,0.15); /* Sombra más pronunciada para el hover */
   }
+
+  .directory-list {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+  }
+  .directory-item {
+    margin-bottom: 10px;
+  }
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+  }
 </style>
 {% endblock %}
 
@@ -90,6 +104,20 @@
       </div>
     </div>
     {% endfor %}
+      
+    <div class="directory-list">
+      <h3>Directories</h3>
+      {% for directory in directories %}
+      <div class="directory-item">
+        <strong>Directory:</strong> {{ directory.name }}
+        <div><strong>Path:</strong> {{ directory.path }}</div>
+        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Open</a>
+      </div>
+      {% empty %}
+      <p>No directories found.</p>
+      {% endfor %}
+    </div>
+
   </div>
   
   <!-- Paginación -->

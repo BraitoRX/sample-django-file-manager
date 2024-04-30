@@ -174,7 +174,7 @@ def file_manager(request, file_path=None):
                 relative_file_path = os.path.join('Temp', local_file_name)
                 archivo['temp'] = relative_file_path
 
-        return render(request, 'pages/file-manager.html', {'files': archivos, 'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
+        return render(request, 'pages/file-manager.html', {'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
     else:
         normalized_file_path = file_path.replace('%slash%', '/')
         try:
@@ -198,10 +198,10 @@ def file_manager(request, file_path=None):
                     archivo['temp'] = relative_file_path
                     print(' > archivo ' + str(archivo))
 
-            print(' > archivos ' + str(archivos))
+            print(' > archivos ' + str(directorios))
 
             
-            return render(request, 'pages/file-manager.html', {'files': archivos, 'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
+            return render(request, 'pages/file-manager.html', {'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
         
 
 
