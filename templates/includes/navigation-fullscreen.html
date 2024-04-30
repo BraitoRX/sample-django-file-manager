@@ -7,28 +7,6 @@
         <span class="px-3 font-weight-bold text-lg text-white me-4">Fiscalía general de la nación</span>
       </div>
     </nav>
-    <ul class="navbar-nav d-none d-lg-flex">
-      <li class="nav-item px-3 py-3 border-radius-sm  d-flex align-items-center">
-        <a href="{% url 'dashboard' %}" class="nav-link text-white p-0">
-          Dashboard
-        </a>
-      </li>
-      <li class="nav-item px-3 py-3 border-radius-sm  d-flex align-items-center">
-        <a href="{% url 'tables' %}" class="nav-link text-white p-0">
-          Tables
-        </a>
-      </li>
-      <li class="nav-item px-3 py-3 border-radius-sm {% if 'wallet' in segment %} bg-slate-800 {% endif %}  d-flex align-items-center">
-        <a href="{% url 'wallet' %}" class="nav-link text-white p-0">
-          Wallet
-        </a>
-      </li>
-      <li class="nav-item px-3 py-3 border-radius-sm  d-flex align-items-center">
-        <a href="{% url 'rtl' %}" class="nav-link text-white p-0">
-          RTL
-        </a>
-      </li>
-    </ul>
     <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
       <ul class="navbar-nav ms-md-auto  justify-content-end">
         <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
