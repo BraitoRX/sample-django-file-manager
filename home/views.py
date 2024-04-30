@@ -172,7 +172,7 @@ def file_manager(request, file_path=None):
                 hdfs.get(archivo['file'], absolute_file_path)
                 relative_file_path = os.path.join('Temp', local_file_name)
                 archivo['temp'] = relative_file_path
-        print(directorios)
+            
         return render(request, 'pages/file-manager.html', {'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
     else:
         normalized_file_path = file_path.replace('%slash%', '/')

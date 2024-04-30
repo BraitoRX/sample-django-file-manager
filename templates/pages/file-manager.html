@@ -125,8 +125,7 @@
     {% for directory in directories %}
     <div class="directory-item">
       <strong>Directory:</strong> {{ directory.name }}
-      <div><strong>Path:</strong> {{ directory.path }}</div>
-      <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Open</a>
+      <a href="{% url 'file_manager' directory.name %}" class="btn btn-primary btn-sm">Open</a>
     </div>
     {% empty %}
     <p>No directories found.</p>
