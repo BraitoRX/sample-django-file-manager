@@ -166,7 +166,7 @@ def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, r
     page_obj_dir = paginator_dir.get_page(paginator_page_number_dir)  
 
     for directorio in directorios:
-        path = os.path.join("/", directorio['name'])
+        path = os.path.join(initial_path, directorio['name'])
         directorio['path'] = path
     return archivos, directorios, page_obj_dir, page_obj
 
