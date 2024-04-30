@@ -132,6 +132,18 @@
     <p>No directories found.</p>
     {% endfor %}
   </div>
+  
+  <div class="pagination">
+    {% if page_obj_dir.has_previous %}
+      <a href="?page=1">Primera</a>
+      <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+    {% endif %}
+    <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
+    {% if page_obj_dir.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+    {% endif %}
+  </div>
 
   <!-- Botón flotante "Ver Todos" -->
   <button onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
