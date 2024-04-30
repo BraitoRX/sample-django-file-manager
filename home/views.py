@@ -180,8 +180,6 @@ def file_manager(request, file_path=None):
         for directorio in directorios:
             path = os.path.join("/", directorio['name'])
             directorio['path'] = path
-
-
             
         return render(request, 'pages/file-manager.html', {'directories': directorios,"page_obj_dir":page_obj_dir,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
     else:
