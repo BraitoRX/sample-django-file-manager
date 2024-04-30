@@ -157,29 +157,6 @@ def file_manager(request, file_path=None):
     if not os.path.exists(temp_dir_path):
         os.makedirs(temp_dir_path)
 
-
-    # Si no hay una ruta de archivo especificada, muestra el directorio raíz
-    if file_path is None:
-        archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
-        
-        paginator = Paginator(archivos, 10)
-        page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
-        page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
-
-        for archivo in archivos:
-            if archivo['file_extension'] in [".png",".jpg",".jpeg",".gif"]:
-                local_file_name = os.path.basename(archivo['file'])
-                file_extension = archivo['file_extension']
-                absolute_file_path = os.path.join(temp_dir_path, local_file_name)
-                # hdfs.get(archivo['file'], absolute_file_path)
-                relative_file_path = os.path.join('Temp', local_file_name)
-                archivo['temp'] = relative_file_path
-                print(' > archivo ' + str(archivo))
-
-        print(' > archivos ' + str(archivos))
-
-        return render(request, 'pages/file-manager.html', {'files': archivos, 'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
-
     # Normaliza la ruta del archivo reemplazando '%slash%' por '/'
     normalized_file_path = file_path.replace('%slash%', '/')
 
@@ -193,9 +170,20 @@ def file_manager(request, file_path=None):
     if file_info['kind'] == 'directory':
         archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
 
+        archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
         paginator = Paginator(archivos, 10)
         page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
         page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
+
+        for archivo in archivos:
+            if archivo['file_extension'] in [".png",".jpg",".jpeg",".gif"]:
+                local_file_name = os.path.basename(archivo['file'])
+                file_extension = archivo['file_extension']
+                absolute_file_path = os.path.join(temp_dir_path, local_file_name)
+                # hdfs.get(archivo['file'], absolute_file_path)
+                relative_file_path = os.path.join('Temp', local_file_name)
+                archivo['temp'] = relative_file_path
+                print(' > archivo ' + str(archivo))
 
         print(' > archivos ' + str(archivos))
 
