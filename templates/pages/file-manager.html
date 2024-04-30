@@ -104,19 +104,6 @@
       </div>
     </div>
     {% endfor %}
-      
-    <div class="directory-list">
-      <h3>Directories</h3>
-      {% for directory in directories %}
-      <div class="directory-item">
-        <strong>Directory:</strong> {{ directory.name }}
-        <div><strong>Path:</strong> {{ directory.path }}</div>
-        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Open</a>
-      </div>
-      {% empty %}
-      <p>No directories found.</p>
-      {% endfor %}
-    </div>
 
   </div>
   
@@ -131,6 +118,19 @@
       <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
       <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
     {% endif %}
+  </div>
+
+  <div class="directory-list">
+    <h3>Directories</h3>
+    {% for directory in directories %}
+    <div class="directory-item">
+      <strong>Directory:</strong> {{ directory.name }}
+      <div><strong>Path:</strong> {{ directory.path }}</div>
+      <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Open</a>
+    </div>
+    {% empty %}
+    <p>No directories found.</p>
+    {% endfor %}
   </div>
 
   <!-- Botón flotante "Ver Todos" -->

@@ -157,7 +157,6 @@ def file_manager(request, file_path=None):
     if not os.path.exists(temp_dir_path):
         os.makedirs(temp_dir_path)
 
-
     # Si no hay una ruta de archivo especificada, muestra el directorio raíz
     if file_path is None:
         archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
@@ -173,7 +172,7 @@ def file_manager(request, file_path=None):
                 hdfs.get(archivo['file'], absolute_file_path)
                 relative_file_path = os.path.join('Temp', local_file_name)
                 archivo['temp'] = relative_file_path
-
+        print(directorios)
         return render(request, 'pages/file-manager.html', {'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
     else:
         normalized_file_path = file_path.replace('%slash%', '/')
@@ -198,7 +197,7 @@ def file_manager(request, file_path=None):
                     archivo['temp'] = relative_file_path
                     print(' > archivo ' + str(archivo))
 
-            print(' > archivos ' + str(directorios))
+            
 
             
             return render(request, 'pages/file-manager.html', {'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
