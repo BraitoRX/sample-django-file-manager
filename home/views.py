@@ -152,7 +152,12 @@ def file_manager(request, file_path=None):
 
     hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
 
-    
+    # Crea el directorio 'Temp' dentro de MEDIA_ROOT si no existe
+    temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
+    if not os.path.exists(temp_dir_path):
+        os.makedirs(temp_dir_path)
+
+
     # Si no hay una ruta de archivo especificada, muestra el directorio raíz
     if file_path is None:
         archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
@@ -160,6 +165,8 @@ def file_manager(request, file_path=None):
         paginator = Paginator(archivos, 10)
         page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
         page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
+
+        print(' > archivos ' + str(archivos))
 
         return render(request, 'pages/file-manager.html', {'files': archivos, 'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
 
@@ -179,7 +186,10 @@ def file_manager(request, file_path=None):
         paginator = Paginator(archivos, 10)
         page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
         page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
-        print(file_info)
+
+        print(' > archivos ' + str(archivos))
+
+        
         return render(request, 'pages/file-manager.html', {'files': archivos, 'directories': directorios,'selected_directory': "/",'page_obj': page_obj,'segment': 'file_manager'})
     
 
@@ -187,10 +197,7 @@ def file_manager(request, file_path=None):
     local_file_name = os.path.basename(normalized_file_path)
     file_extension = os.path.splitext(local_file_name)[1]
 
-    # Crea el directorio 'Temp' dentro de MEDIA_ROOT si no existe
-    temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
-    if not os.path.exists(temp_dir_path):
-        os.makedirs(temp_dir_path)
+
 
     # Ruta absoluta en el servidor donde se guardará temporalmente el archivo
     absolute_file_path = os.path.join(temp_dir_path, local_file_name)
@@ -217,40 +224,15 @@ def file_manager(request, file_path=None):
     except IOError:
         # Si hay un error al abrir o leer el archivo
         return HttpResponse('Error al abrir o leer el archivo.', status=500)
-    
 
-
-    directory = ''
-    media_path = os.path.join(settings.MEDIA_ROOT)
-
-    directories = generate_nested_directory(media_path, media_path)
-    selected_directory = directory
-
-    # Obtiene todos los archivos del directorio seleccionado
-    selected_directory_path = os.path.join(media_path, selected_directory)
-    if os.path.isdir(selected_directory_path):
-        all_files = get_files_from_directory(selected_directory_path)
-    else:
-        all_files = []
-
-    # Configura la paginación
-    paginator = Paginator(all_files, 10)  # Muestra 10 archivos por página
-    page_number = request.GET.get('page', 1)  # Obtiene el número de página de GET request
-    page_obj = paginator.get_page(page_number)  # Obtiene los objetos para la página actual
-
-    breadcrumbs = get_breadcrumbs(request)
-
-    context = {
-        'directories': directories,
-        'page_obj': page_obj,
-        'selected_directory': selected_directory,
-        'segment': 'file_manager',
-        'breadcrumbs': breadcrumbs
-    }
-    return render(request, 'pages/file-manager.html', context)
 
 
 def show_file_content(request, file_path=None):
+
+    # Crea el directorio 'Temp' dentro de MEDIA_ROOT si no existe
+    temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
+    if not os.path.exists(temp_dir_path):
+        os.makedirs(temp_dir_path)
 
     hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
 
@@ -268,19 +250,25 @@ def show_file_content(request, file_path=None):
     except FileNotFoundError:
         raise Http404('El archivo o directorio solicitado no existe.')
 
+
+
+
+
     # Si es un directorio, obtén los archivos y directorios dentro de él
     if file_info['kind'] == 'directory':
         archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
+
+        print(' > archivos ' + str(archivos))
+
+        
         return render(request, 'pages/file_detail.html', {'files': archivos, 'directories': directorios})
 
     # Trata el caso de que sea un archivo
+
     local_file_name = os.path.basename(normalized_file_path)
     file_extension = os.path.splitext(local_file_name)[1]
 
-    # Crea el directorio 'Temp' dentro de MEDIA_ROOT si no existe
-    temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
-    if not os.path.exists(temp_dir_path):
-        os.makedirs(temp_dir_path)
+
 
     # Ruta absoluta en el servidor donde se guardará temporalmente el archivo
     absolute_file_path = os.path.join(temp_dir_path, local_file_name)
