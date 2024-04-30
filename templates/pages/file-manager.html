@@ -195,7 +195,7 @@
         <div class="file-viewer">
           {% if file_path %}
             <!-- Código para mostrar un solo archivo -->
-            {% if file_name|file_extension in ".jpg, .png, .gif" %}
+            {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
             <img src="/media/{{ temp }}" alt="{{ file_name }}">
             {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
             <video controls>
