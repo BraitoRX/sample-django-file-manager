@@ -77,7 +77,12 @@
 </style>
 {% endblock %}
 
+
+
+
 {% block content %}
+
+{% if page_obj %}
 <div class="container-fluid py-4 px-5">
   <div class="file-grid">
     {% for file in page_obj %}
@@ -107,9 +112,9 @@
     <p>No hay archivos</p>
     {% endfor %}
 
-
   </div>
-  
+  {% endif %}
+
   <!-- Paginación -->
   <div class="pagination">
     {% if page_obj.has_previous %}
@@ -123,31 +128,36 @@
     {% endif %}
   </div>
 
-  <div class="directory-list">
-    <h3>Carpetas</h3>
-    {% for directory in directories %}
-    <div class="directory-item">
-      <strong>Directory:</strong> {{ directory.name }}
-      <div><strong>Path:</strong> {{ directory.path }}</div>
-      <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
-    </div>
-    {% empty %}
-    <p>No hay directorios</p>
-    {% endfor %}
-    
-  </div>
 
-  <div class="pagination">
-    {% if page_obj_dir.has_previous %}
-      <a href="?page_dir=1">Primera</a>
-      <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
+    {% if directories %}
+      <div class="directory-list">
+      <h3>Carpetas</h3>
+      {% for directory in directories %}
+      <div class="directory-item">
+        <strong>Directory:</strong> {{ directory.name }}
+        <div><strong>Path:</strong> {{ directory.path }}</div>
+        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
+      </div>
+      {% empty %}
+      <p>No hay directorios</p>
+      {% endfor %}
+      </div>
+      <div class="pagination">
+        {% if page_obj_dir.has_previous %}
+          <a href="?page_dir=1">Primera</a>
+          <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
+        {% endif %}
+        <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
+        {% if page_obj_dir.has_next %}
+          <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
+          <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
+        {% endif %}
+      </div>
     {% endif %}
-    <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
-    {% if page_obj_dir.has_next %}
-      <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
-      <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
-    {% endif %}
-  </div>
+    
+
+
+
 
   <!-- Botón flotante "Ver Todos" -->
   <button onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
