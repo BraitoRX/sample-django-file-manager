@@ -7709,7 +7709,7 @@ textarea.form-control-lg {
   background-color: #cbd5e1 !important; }
 
 .bg-dark {
-  background-color: #1e293b !important; }
+  background-color: #0000 !important; }
 
 .bg-white {
   background-color: #fff !important; }
@@ -7748,7 +7748,7 @@ textarea.form-control-lg {
   background-color: #212529 !important; }
 
 .bg-slate-800 {
-  background-color: #1e293b !important; }
+  background-color: #000000 !important; }
 
 .bg-slate-900 {
   background-color: #dbe4eb !important; }
@@ -15029,7 +15029,7 @@ hr.horizontal {
 .navbar-vertical .navbar-nav > .nav-item .nav-link.active {
   color: #fff;
   font-weight: 600;
-  background-color: #1e293b; }
+  background-color: #000000; }
   .navbar-vertical .navbar-nav > .nav-item .nav-link.active .icon svg .color-background,
   .navbar-vertical .navbar-nav > .nav-item .nav-link.active .icon svg .color-foreground {
     fill: #774dd3; }
