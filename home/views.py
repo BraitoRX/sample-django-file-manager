@@ -146,7 +146,7 @@ def get_breadcrumbs(request):
 
     return breadcrumbs
 
-def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request):
+def organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request,initial_path="/"):
 
     paginator = Paginator(archivos, 10)
     page_number = request.GET.get('page', 1)  
@@ -193,7 +193,7 @@ def file_manager(request, file_path=None):
 
         if file_info['kind'] == 'directory':
             archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
-            archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request)
+            archivos, directorios, page_obj_dir,page_obj = organizar_directorios_archivos(archivos, directorios, hdfs, temp_dir_path, request,normalized_file_path)
             return render(request, 'pages/file-manager.html', {'directories': directorios,"page_obj_dir":page_obj_dir,'selected_directory': normalized_file_path,'page_obj': page_obj,'segment': 'file_manager'})
         
 
