@@ -132,10 +132,9 @@
       <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
     </div>
     {% empty %}
-    <p>
-      {% empty %}
-      <p>No hay directorios</p>
+    <p>No hay directorios</p>
     {% endfor %}
+    
   </div>
 
   <div class="pagination">
