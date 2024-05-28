@@ -12,23 +12,23 @@
   .file-item {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Esto asegura que los actions siempre estén abajo */
+    justify-content: space-between;
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
     position: relative;
-    height: 100%; /* Altura completa para manejar mejor los contenidos */
+    height: 100%;
   }
   .file-image {
     width: 100%;
-    max-height: 150px; /* Controla la altura de las imágenes */
+    max-height: 150px;
     object-fit: contain;
     margin-bottom: 10px;
   }
   .actions {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px; /* Espacio arriba para separar de los contenidos */
+    padding-top: 10px;
   }
   .icon {
     cursor: pointer;
@@ -46,7 +46,6 @@
     top: 10px;
     right: 10px;
   }
-  /* Estilos para el botón "Ver Todos" */
   .view-all-btn {
     position: fixed;
     bottom: 20px;
@@ -54,7 +53,7 @@
     z-index: 1000;
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007BFF; /* Azul Bootstrap */
+    background-color: #007BFF;
     color: white;
     border: none;
     border-radius: 5px;
@@ -67,49 +66,16 @@
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   }
 
-  .directory-list {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-  }
-  .directory-item {
-    margin-bottom: 10px;
-  }
-  .btn-sm {
-    padding: 5px 10px;
-    font-size: 0.875rem;
-  }
-
-
-  .file-viewer {
+  .modal-content {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    min-height: 80vh; /* Ajusta esto según tus necesidades */
     padding: 20px;
-    overflow: auto; /* Permite el desplazamiento si el contenido excede el área visible */
   }
-  .file-viewer img {
-    max-width: 100%; /* Ajuste para asegurar que la imagen se ajusta dentro del contenedor */
-    max-height: 80vh;
-    object-fit: contain; /* Muestra toda la imagen ajustada al contenedor */
+  .modal-image {
+    width: 200px;
+    margin: 10px;
   }
-  .file-viewer video, .file-viewer iframe {
-    width: 100%; /* Ajuste para llenar el contenedor pero respetando el max-height */
-    max-height: 80vh;
-  }
-  .file-viewer pre {
-    width: 100%; /* Asegura que el área de texto se ajuste al contenedor */
-    max-height: 80vh; /* Altura máxima antes de usar desplazamiento */
-    overflow: auto; /* Añade desplazamiento si el contenido es muy largo */
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #333; /* Fondo oscuro para textos CSV */
-    color: #fff; /* Texto claro para legibilidad */
-    padding: 10px; /* Espacio interior para evitar que el texto toque los bordes */
-  }
-  
 </style>
 {% endblock %}
 
@@ -146,7 +112,6 @@
     <p>No hay archivos</p>
     {% endfor %}
   </div>
-  <!-- Paginación -->
   <div class="pagination">
     {% if page_obj.has_previous %}
     <a href="?page=1">Primera</a>
@@ -185,7 +150,6 @@
   <div class="container">
     <div class="file-viewer">
       {% if file_path %}
-      <!-- Código para mostrar un solo archivo -->
       {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
       <img src="/media/{{ temp }}" alt="{{ file_name }}">
       {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
@@ -203,8 +167,24 @@
     </div>
   </div>
   {% endif %}
-  <!-- Botón flotante "Ver Todos" -->
   <button onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
+</div>
+
+<!-- Modal para mostrar las imágenes seleccionadas -->
+<div class="modal fade" id="selectedFilesModal" tabindex="-1" aria-labelledby="selectedFilesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="selectedFilesModalLabel">Imágenes Seleccionadas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="selectedFilesContainer" class="modal-content">
+          <!-- Aquí se mostrarán las imágenes seleccionadas -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
@@ -213,12 +193,22 @@
 function viewSelected() {
     const selectedFiles = document.querySelectorAll('.check-button:checked');
     const filePaths = [];
+    const selectedFilesContainer = document.getElementById('selectedFilesContainer');
+    selectedFilesContainer.innerHTML = ''; // Limpiar contenedor
+
     selectedFiles.forEach(file => {
-        filePaths.push(file.value);
+        const filePath = file.value;
+        filePaths.push(filePath);
+
+        const img = document.createElement('img');
+        img.src = filePath;
+        img.classList.add('modal-image');
+        selectedFilesContainer.appendChild(img);
     });
-    alert("Archivos seleccionados: \n" + filePaths.join("\n"));
-    // Alternativamente, puedes imprimir los archivos seleccionados en la consola.
-    console.log("Archivos seleccionados:", filePaths);
+
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('selectedFilesModal'));
+    modal.show();
 }
 </script>
 {% endblock %}
