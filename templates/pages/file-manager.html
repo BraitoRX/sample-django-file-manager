@@ -227,8 +227,25 @@
 <script>
 function viewSelected() {
     const selectedFiles = document.querySelectorAll('.check-button:checked');
-    console.log(selectedFiles);
-    console.log(selectedFiles.length);
+    const selectedFileDetails = [];
+
+    selectedFiles.forEach(file => {
+        const fileItem = file.closest('.file-item');
+        const fileName = fileItem.querySelector('strong').textContent;
+        const fileType = fileItem.querySelector('div:nth-child(2)').textContent;
+        const filePath = fileItem.dataset.filePath;
+        const fileInfo = fileItem.dataset.fileInfo; // Assuming you add a data attribute for file info
+
+        selectedFileDetails.push({
+            name: fileName,
+            type: fileType,
+            path: filePath,
+            info: fileInfo
+        });
+    });
+
+    // Imprimir la información de los archivos seleccionados en la consola
+    console.log(selectedFileDetails);
 }
 </script>
 {% endblock %}
