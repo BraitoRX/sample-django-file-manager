@@ -110,9 +110,8 @@
   .file-info {
     text-align: center;
     margin-top: 10px;
-    word-break: break-all; /* Permite que las palabras largas se dividan */
+    word-break: break-all;
   }
-
 </style>
 {% endblock %}
 
@@ -215,6 +214,7 @@
 </div>
 {% endif %}
 
+<!-- Modal for Clearing Session -->
 <div class="modal fade" id="clearSessionModal" tabindex="-1" aria-labelledby="clearSessionModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -232,11 +232,29 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for File Info -->
+{% for file in page_obj %}
+<div class="modal fade" id="info-{{forloop.counter}}" tabindex="-1" aria-labelledby="infoModalLabel-{{forloop.counter}}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel-{{forloop.counter}}">Información del Archivo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Archivo: </strong>{{ file.filename }}</p>
+        <p><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</p>
+        <p><strong>Ruta: </strong>{{ file.file_path }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
 {% endblock %}
-
-
-
-
 
 {% block extrascripts %}
 <script>
@@ -259,5 +277,14 @@ function clearSession() {
       }
   });
 }
+
+// Close other modals when opening a new one
+document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.modal.show').forEach(modal => {
+            bootstrap.Modal.getInstance(modal).hide();
+        });
+    });
+});
 </script>
 {% endblock %}
