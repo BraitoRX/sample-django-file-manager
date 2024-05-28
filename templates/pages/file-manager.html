@@ -18,6 +18,7 @@
     background-color: #f9f9f9;
     position: relative;
     height: 100%;
+    overflow: hidden;
   }
   .file-image {
     width: 100%;
@@ -89,9 +90,17 @@
     padding: 10px;
   }
   .file-info {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: center;
     margin-top: 10px;
-    word-break: break-all; /* Permite que las palabras largas se dividan */
+    max-width: 100%;
+    cursor: pointer;
+  }
+  .file-info.expanded {
+    white-space: normal;
+    overflow: visible;
   }
 </style>
 {% endblock %}
@@ -102,17 +111,16 @@
   <form id="selectedFilesForm" method="POST" action="{% url 'view_selected_files' %}">
     {% csrf_token %}
     <div class="file-grid">
-      {% for file in files %}
-      <div class="file-item" data-bs-toggle="tooltip" title="{{ file.path|info_value }}">
-        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.path }}" 
-               {% if file.path in selected_files %}checked{% endif %}>
-        <div class="file-info">
-          <strong>Archivo: </strong>{{ file.name }}
-          <div><strong>Tipo: </strong>{{ file.name|file_extension|upper }}</div>
+      {% for file in page_obj %}
+      <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
+        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}">
+        <div class="file-info" onclick="this.classList.toggle('expanded')">
+          <strong>Archivo: </strong>{{ file.filename }}
+          <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
         </div>
         <div class="file-preview">
-          {% if file.name|is_image %}
-          <img src="/media/{{ file.path }}" alt="{{ file.name }}" class="file-image">
+          {% if file.filename|is_image %}
+          <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
           {% else %}
           <span>No es una imagen</span>
           {% endif %}
@@ -132,6 +140,40 @@
       <p>No hay archivos</p>
       {% endfor %}
     </div>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page=1">Primera</a>
+      <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+      {% endif %}
+    </div>
+    <div class="directory-list">
+      <h3>Carpetas</h3>
+      {% for directory in directories %}
+      <div class="directory-item">
+        <strong>Directory:</strong> {{ directory.name }}
+        <div><strong>Path:</strong> {{ directory.path }}</div>
+        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
+      </div>
+      {% empty %}
+      <p>No hay directorios</p>
+      {% endfor %}
+    </div>
+    <div class="pagination">
+      {% if page_obj_dir.has_previous %}
+      <a href="?page_dir=1">Primera</a>
+      <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
+      {% if page_obj_dir.has_next %}
+      <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
+      <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
+      {% endif %}
+    </div>
     <button type="button" onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
   </form>
 </div>
@@ -140,13 +182,13 @@
   <div class="file-viewer">
     {% if file_path %}
     {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
-    <img src="/media/{{ file_path }}" alt="{{ file_name }}">
+    <img src="/media/{{ temp }}" alt="{{ file_name }}">
     {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
     <video controls>
-      <source src="/media/{{ file_path }}" type="video/mp4">
+      <source src="/media/{{ temp }}" type="video/mp4">
     </video>
     {% elif file_name|file_extension in ".pdf, .txt" %}
-    <iframe src="/media/{{ file_path }}" frameborder="0"></iframe>
+    <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
     {% elif file_name|file_extension in ".csv" %}
     <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
     {% endif %}
