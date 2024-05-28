@@ -2,9 +2,5 @@
 
 #!/bin/bash
 
-# Activar el entorno conda
-conda activate test
+/hadoop/anaconda3/envs/test/bin/python /hadoop/PruebasFileManager/sample-django-file-manager/manage.py cleartemp
 
-python /hadoop/PruebasFileManager/sample-django-file-manager/manage.py cleartemp
-
-conda deactivate
