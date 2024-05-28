@@ -122,7 +122,7 @@
 <div class="container-fluid py-4 px-5">
   <div class="file-grid">
     {% for file in page_obj %}
-    <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}" data-file-path="{{ file.file_path }}">
+    <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
       <input type="checkbox" class="check-button"> 
       <div>
         <strong>Archivo: </strong>{{ file.filename }}
@@ -139,14 +139,14 @@
         <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
           <i class="fa-solid fa-info text-success"></i>
         </span>
-        <span class="icon" data-bs-target="#view-{{forloop.counter}}">
-          <a href="{% url 'file_manager' file.file_path %}">
+        <span  class="icon" data-bs-target="#view-{{forloop.counter}}">
+          <a href="{% url 'file_manager' file.path %}">
             <i class="fa-solid fa-eye text-primary"></i>
           </a>
-        </span>
+        </a>
+
       </div>
     </div>
-    
     {% empty %}
     <p>No hay archivos</p>
     {% endfor %}
@@ -225,37 +225,11 @@
 
 {% block extrascripts %}
 <script>
-  function viewSelected() {
-      const selectedFiles = document.querySelectorAll('.check-button:checked');
-      const selectedFileDetails = [];
-  
-      selectedFiles.forEach(file => {
-          const fileItem = file.closest('.file-item');
-          const fileName = fileItem.querySelector('strong').textContent;
-          const fileType = fileItem.querySelector('div:nth-child(2)').textContent;
-          const filePath = fileItem.dataset.filePath;
-  
-          selectedFileDetails.push({
-              name: fileName,
-              type: fileType,
-              path: filePath
-          });
-      });
-  
-      console.log(selectedFileDetails); // Imprimir en la consola
-  
-      const outputDiv = document.getElementById('selected-files-info');
-      outputDiv.innerHTML = '';
-  
-      selectedFileDetails.forEach(file => {
-          const fileInfoDiv = document.createElement('div');
-          fileInfoDiv.innerHTML = `<p><strong>Nombre:</strong> ${file.name}<br>
-                                   <strong>Tipo:</strong> ${file.type}<br>
-                                   <strong>Ruta:</strong> ${file.path}</p>`;
-          outputDiv.appendChild(fileInfoDiv);
-      });
-  }
-  </script>
+function viewSelected() {
+    const selectedFiles = document.querySelectorAll('.check-button:checked');
+    console.log(selectedFiles);
+}
+</script>
 {% endblock %}
 
 
