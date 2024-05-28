@@ -114,7 +114,7 @@
     <div class="file-grid">
       {% for file in page_obj %}
       <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
-        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}" {% if '/media/' ~ file.temp in request.session.selected_files %}checked{% endif %}>
+        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}" {% if ('/media/'|add:file.temp) in request.session.selected_files %}checked{% endif %}>
         <div class="file-info">
           <strong>Archivo: </strong>{{ file.filename }}
           <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
