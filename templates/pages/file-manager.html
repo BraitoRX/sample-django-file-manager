@@ -1,5 +1,7 @@
-{% extends 'layouts/base.html' %} {% load static file_extension info_value %} 
-{%block extrastyle %}
+{% extends 'layouts/base.html' %}
+{% load static file_extension info_value %}
+
+{% block extrastyle %}
 <style>
   .file-grid {
     display: grid;
@@ -36,8 +38,7 @@
     display: flex;
     justify-content: center;
   }
-  .pagination a,
-  .pagination span {
+  .pagination a, .pagination span {
     margin: 0 10px;
   }
   .check-button {
@@ -52,17 +53,17 @@
     z-index: 1000;
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007bff;
+    background-color: #007BFF;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: background-color 0.3s, box-shadow 0.3s;
   }
   .view-all-btn:hover {
     background-color: #0056b3;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   }
   .file-viewer {
     display: flex;
@@ -72,9 +73,7 @@
     padding: 20px;
     overflow: auto;
   }
-  .file-viewer img,
-  .file-viewer video,
-  .file-viewer iframe {
+  .file-viewer img, .file-viewer video, .file-viewer iframe {
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
@@ -95,50 +94,32 @@
     word-break: break-all; /* Permite que las palabras largas se dividan */
   }
 </style>
-{% endblock %} 
-{% block content %} 
+{% endblock %}
 
+{% block content %}
 {% if not file_name %}
 <div class="container-fluid py-4 px-5">
-  <form
-    id="selectedFilesForm"
-    method="POST"
-    action="{% url 'view_selected_files' %}"
-  >
+  <form id="selectedFilesForm" method="POST" action="{% url 'view_selected_files' %}">
     {% csrf_token %}
     <div class="file-grid">
       {% for file in page_obj %}
-      <div
-        class="file-item"
-        data-bs-toggle="tooltip"
-        title="{{ file.file_path|info_value }}"
-      >
-        <input type="checkbox" class="check-button" name="selected_files"
-        value="/media/{{ file.temp }}" {% if "/media/"|add:file.temp in request.session.selected_files %}checked{% endif %}>
+      <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
+        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}" 
+       {% if "/media/"|add:file.temp in request.session.selected_files %}checked{% endif %}>
 
         <div class="file-info">
           <strong>Archivo: </strong>{{ file.filename }}
-          <div>
-            <strong>Tipo: </strong>{{ file.filename|file_extension|upper }}
-          </div>
+          <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
         </div>
         <div class="file-preview">
           {% if file.filename|is_image %}
-          <img
-            src="/media/{{ file.temp }}"
-            alt="{{ file.filename }}"
-            class="file-image"
-          />
+          <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
           {% else %}
           <span>No es una imagen</span>
           {% endif %}
         </div>
         <div class="actions">
-          <span
-            class="icon"
-            data-bs-toggle="modal"
-            data-bs-target="#info-{{forloop.counter}}"
-          >
+          <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
             <i class="fa-solid fa-info text-success"></i>
           </span>
           <span class="icon" data-bs-target="#view-{{forloop.counter}}">
@@ -157,10 +138,7 @@
       <a href="?page=1">Primera</a>
       <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
       {% endif %}
-      <span
-        >Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages
-        }}.</span
-      >
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
       {% if page_obj.has_next %}
       <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
       <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
@@ -172,11 +150,7 @@
       <div class="directory-item">
         <strong>Directory:</strong> {{ directory.name }}
         <div><strong>Path:</strong> {{ directory.path }}</div>
-        <a
-          href="{% url 'file_manager' directory.path %}"
-          class="btn btn-primary btn-sm"
-          >Abrir</a
-        >
+        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
       </div>
       {% empty %}
       <p>No hay directorios</p>
@@ -187,55 +161,52 @@
       <a href="?page_dir=1">Primera</a>
       <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
       {% endif %}
-      <span
-        >Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages
-        }}.</span
-      >
+      <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
       {% if page_obj_dir.has_next %}
       <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
       <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
       {% endif %}
     </div>
-    <button type="button" onclick="viewSelected()" class="view-all-btn">
-      Ver Todos
-    </button>
-    <form method="post" action="{% url 'clear_session' %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger">Clear Session</button>
-    </form>
+    <button type="button" onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
   </form>
 </div>
 {% else %}
 <div class="container">
   <div class="file-viewer">
-    {% if file_path %} {% if file_name|file_extension in ".jpg, .png, .jpeg,
-    .gif" %}
-    <img src="/media/{{ temp }}" alt="{{ file_name }}" />
+    {% if file_path %}
+    {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
+    <img src="/media/{{ temp }}" alt="{{ file_name }}">
     {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
     <video controls>
-      <source src="/media/{{ temp }}" type="video/mp4" />
+      <source src="/media/{{ temp }}" type="video/mp4">
     </video>
     {% elif file_name|file_extension in ".pdf, .txt" %}
     <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
     {% elif file_name|file_extension in ".csv" %}
     <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
-    {% endif %} {% else %}
+    {% endif %}
+    {% else %}
     <p>No file selected.</p>
     {% endif %}
   </div>
 </div>
 {% endif %}
 <div>
-  hola mundo {{ request.session.person }} {{ request.session.selected_files }}
+  hola mundo
+  {{ request.session.person }}
+  {{ request.session.selected_files }}
 </div>
 
-{% endblock %} 
+{% endblock %}
+
+
+
 
 {% block extrascripts %}
 <script>
-  function viewSelected() {
-    const selectedFilesForm = document.getElementById("selectedFilesForm");
+function viewSelected() {
+    const selectedFilesForm = document.getElementById('selectedFilesForm');
     selectedFilesForm.submit();
-  }
+}
 </script>
 {% endblock %}
