@@ -2,25 +2,33 @@
 
 {% block extrastyle %}
 <style>
-  .selected-files {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
+  .selected-images {
+    display: inline-flex;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-x: auto;
   }
-  .file-item {
+  .file-viewer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid #ccc;
-    padding: 10px;
-    background-color: #f9f9f9;
+    min-width: 200px; /* Ajuste de tamaño mínimo para cada elemento */
   }
-  .file-image {
-    max-width: 200px;
-    max-height: 150px;
+  .file-viewer img, .file-viewer video, .file-viewer iframe {
+    max-width: 100%;
+    max-height: 80vh;
     object-fit: contain;
-    margin-bottom: 10px;
+  }
+  .file-viewer pre {
+    width: 100%;
+    max-height: 80vh;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #333;
+    color: #fff;
+    padding: 10px;
   }
   .file-info {
     text-align: center;
@@ -29,11 +37,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="selected-files">
+<div class="selected-images">
   {% for file in file_details %}
-  <div class="file-item">
+  <div class="file-viewer">
     {% if file.extension in "JPG, JPEG, PNG, GIF" %}
-    <img src="{{ file.path }}" alt="{{ file.name }}" class="file-image">
+    <img src="{{ file.path }}" alt="{{ file.name }}">
     {% endif %}
     <div class="file-info">
       <strong>Nombre:</strong> {{ file.name }}<br>

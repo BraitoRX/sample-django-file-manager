@@ -406,3 +406,4 @@ def view_selected_files(request):
     else:
         return redirect('file_manager')
 
+
