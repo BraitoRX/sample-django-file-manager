@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 import tempfile
 from hdfs3 import HDFileSystem
 from django.shortcuts import render
-from django.views.decorators.http import require_POST
+
 
 # Create your views here.
 
@@ -413,10 +413,9 @@ def view_selected_files(request):
     else:
         return redirect('file_manager')
         
-@require_POST
 def clear_session(request):
     request.session.flush()
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+    return redirect('file_manager')
 
 
 
