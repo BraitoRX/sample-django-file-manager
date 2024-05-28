@@ -12,23 +12,23 @@
   .file-item {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; /* Esto asegura que los actions siempre estén abajo */
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
     position: relative;
-    height: 100%;
+    height: 100%; /* Altura completa para manejar mejor los contenidos */
   }
   .file-image {
     width: 100%;
-    max-height: 150px;
+    max-height: 150px; /* Controla la altura de las imágenes */
     object-fit: contain;
     margin-bottom: 10px;
   }
   .actions {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
+    padding-top: 10px; /* Espacio arriba para separar de los contenidos */
   }
   .icon {
     cursor: pointer;
@@ -46,6 +46,7 @@
     top: 10px;
     right: 10px;
   }
+  /* Estilos para el botón "Ver Todos" */
   .view-all-btn {
     position: fixed;
     bottom: 20px;
@@ -53,7 +54,7 @@
     z-index: 1000;
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007BFF;
+    background-color: #007BFF; /* Azul Bootstrap */
     color: white;
     border: none;
     border-radius: 5px;
@@ -65,6 +66,7 @@
     background-color: #0056b3;
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   }
+
   .directory-list {
     margin-top: 30px;
     padding: 20px;
@@ -78,43 +80,50 @@
     padding: 5px 10px;
     font-size: 0.875rem;
   }
+
+
   .file-viewer {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    min-height: 80vh; /* Ajusta esto según tus necesidades */
     padding: 20px;
-    overflow: auto;
+    overflow: auto; /* Permite el desplazamiento si el contenido excede el área visible */
   }
   .file-viewer img {
-    max-width: 100%;
+    max-width: 100%; /* Ajuste para asegurar que la imagen se ajusta dentro del contenedor */
     max-height: 80vh;
-    object-fit: contain;
+    object-fit: contain; /* Muestra toda la imagen ajustada al contenedor */
   }
   .file-viewer video, .file-viewer iframe {
-    width: 100%;
+    width: 100%; /* Ajuste para llenar el contenedor pero respetando el max-height */
     max-height: 80vh;
   }
   .file-viewer pre {
-    width: 100%;
-    max-height: 80vh;
-    overflow: auto;
+    width: 100%; /* Asegura que el área de texto se ajuste al contenedor */
+    max-height: 80vh; /* Altura máxima antes de usar desplazamiento */
+    overflow: auto; /* Añade desplazamiento si el contenido es muy largo */
     border: 1px solid #ccc;
     border-radius: 4px;
-    background: #333;
-    color: #fff;
-    padding: 10px;
+    background: #333; /* Fondo oscuro para textos CSV */
+    color: #fff; /* Texto claro para legibilidad */
+    padding: 10px; /* Espacio interior para evitar que el texto toque los bordes */
   }
+  
 </style>
 {% endblock %}
 
+
+
+
 {% block content %}
+
+{% if not file_name %}
 <div class="container-fluid py-4 px-5">
-  {% if not selected_files %}
   <div class="file-grid">
     {% for file in page_obj %}
     <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
-      <input type="checkbox" class="check-button" value="{{ file.file_path }}"> 
+      <input type="checkbox" class="check-button"> 
       <div>
         <strong>Archivo: </strong>{{ file.filename }}
         <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
@@ -130,79 +139,86 @@
         <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
           <i class="fa-solid fa-info text-success"></i>
         </span>
-        <span class="icon" data-bs-target="#view-{{forloop.counter}}">
+        <span  class="icon" data-bs-target="#view-{{forloop.counter}}">
           <a href="{% url 'file_manager' file.path %}">
             <i class="fa-solid fa-eye text-primary"></i>
           </a>
-        </span>
+        </a>
+
       </div>
     </div>
     {% empty %}
     <p>No hay archivos</p>
     {% endfor %}
+
   </div>
-  <!-- Paginación -->
-  <div class="pagination">
-    {% if page_obj.has_previous %}
-      <a href="?page=1">Primera</a>
-      <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-    {% endif %}
-    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
-    {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
-    {% endif %}
-  </div>
-  <div class="directory-list">
-    <h3>Carpetas</h3>
-    {% for directory in directories %}
-    <div class="directory-item">
-      <strong>Directory:</strong> {{ directory.name }}
-      <div><strong>Path:</strong> {{ directory.path }}</div>
-      <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
+    <!-- Paginación -->
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page=1">Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+      {% endif %}
     </div>
-    {% empty %}
-    <p>No hay directorios</p>
-    {% endfor %}
-  </div>
-  <div class="pagination">
-    {% if page_obj_dir.has_previous %}
-      <a href="?page_dir=1">Primera</a>
-      <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
-    {% endif %}
-    <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
-    {% if page_obj_dir.has_next %}
-      <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
-      <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
-    {% endif %}
-  </div>
-  {% else %}
-  <div class="file-grid">
-    {% for file in selected_files %}
-    <div class="file-item">
-      <div>
-        <strong>Archivo: </strong>{{ file.file_name }}
-        <div><strong>Tipo: </strong>{{ file.file_extension|upper }}</div>
+    
+      <div class="directory-list">
+      <h3>Carpetas</h3>
+      {% for directory in directories %}
+      <div class="directory-item">
+        <strong>Directory:</strong> {{ directory.name }}
+        <div><strong>Path:</strong> {{ directory.path }}</div>
+        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
       </div>
-      <div class="file-preview">
-        {% if file.file_extension in '.jpg, .png, .jpeg, .gif' %}
-        <img src="/media/{{ file.temp }}" alt="{{ file.file_name }}" class="file-image">
-        {% elif file.file_extension in '.mp4, .webm, .ogg, .wav' %}
-        <video controls>
-          <source src="/media/{{ file.temp }}" type="video/mp4">
-        </video>
-        {% elif file.file_extension in '.pdf, .txt' %}
-        <iframe src="/media/{{ file.temp }}" frameborder="0"></iframe>
-        {% elif file.file_extension == '.csv' %}
-        <pre class="bg-dark text-light p-3">{{ file.csv_text }}</pre>
-        {% else %}
-        <span>No es un formato soportado</span>
+      {% empty %}
+      <p>No hay directorios</p>
+      {% endfor %}
+      </div>
+      <div class="pagination">
+        {% if page_obj_dir.has_previous %}
+          <a href="?page_dir=1">Primera</a>
+          <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
+        {% endif %}
+        <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
+        {% if page_obj_dir.has_next %}
+          <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
+          <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
         {% endif %}
       </div>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
+
+      {% else %}
+
+      <div class="container">
+        <div class="file-viewer">
+          {% if file_path %}
+            <!-- Código para mostrar un solo archivo -->
+            {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
+            <img src="/media/{{ temp }}" alt="{{ file_name }}">
+            {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
+            <video controls>
+              <source src="/media/{{ temp }}" type="video/mp4">
+            </video>
+            {% elif file_name|file_extension in ".pdf, .txt" %}
+            <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
+            {% elif file_name|file_extension in ".csv" %}
+            <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
+            {% endif %}
+          {% else %}
+            <p>No file selected.</p>
+          {% endif %}
+        </div>
+      </div>
+    
+      {% endif %}
+    
+    
+
+
+
+  <!-- Botón flotante "Ver Todos" -->
   <button onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
 </div>
 {% endblock %}
@@ -211,27 +227,11 @@
 <script>
 function viewSelected() {
     const selectedFiles = document.querySelectorAll('.check-button:checked');
-    const selectedFilePaths = Array.from(selectedFiles).map(file => file.value);
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = "{% url 'view_selected_files' %}";
-
-    const csrfToken = document.createElement("input");
-    csrfToken.type = "hidden";
-    csrfToken.name = "csrfmiddlewaretoken";
-    csrfToken.value = "{{ csrf_token }}";
-    form.appendChild(csrfToken);
-
-    selectedFilePaths.forEach(filePath => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "selected_files[]";
-        input.value = filePath;
-        form.appendChild(input);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
+    console.log(selectedFiles);
 }
 </script>
 {% endblock %}
+
+
+
+
