@@ -385,6 +385,17 @@ def file_detail(request, file_path=None):
 
         # Renderiza la plantilla para mostrar la lista de archivos en la carpeta
         return render(request, 'pages/file_detail.html', {'files': absolute_files})
+    
+
+def view_selected_files(request):
+    if request.method == 'POST':
+        selected_files = request.POST.getlist('selected_files')
+        context = {'selected_files': selected_files}
+        return render(request, 'selected_files.html', context)
+    else:
+        return redirect('file_manager')
+    
+
 
 
 

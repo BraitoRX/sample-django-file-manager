@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="container">
+  <h2>Imágenes Seleccionadas</h2>
+  <div class="file-grid">
+    {% for file in selected_files %}
+    <div class="file-item">
+      <img src="/media/{{ file }}" alt="Selected Image" class="file-image">
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
