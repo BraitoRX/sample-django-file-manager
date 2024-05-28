@@ -93,6 +93,26 @@
     margin-top: 10px;
     word-break: break-all; /* Permite que las palabras largas se dividan */
   }
+
+  .clear-session-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #FF0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .clear-session-btn:hover {
+    background-color: #CC0000;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  }
 </style>
 {% endblock %}
 
@@ -168,6 +188,9 @@
       {% endif %}
     </div>
     <button type="button" onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
+    <button type="button" class="clear-session-btn" data-bs-toggle="modal" data-bs-target="#clearSessionModal">
+      Limpiar Sesión
+    </button>
   </form>
 </div>
 {% else %}
@@ -191,31 +214,26 @@
   </div>
 </div>
 {% endif %}
-<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#clearSessionModal">
-  Limpiar Sesión
-</button>
 
-{% endblock %}
-
-<div>
-  <div class="modal fade" id="clearSessionModal" tabindex="-1" aria-labelledby="clearSessionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="clearSessionModalLabel">Confirmar Limpieza de Sesión</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ¿Estás seguro de que deseas limpiar la sesión?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" onclick="clearSession()">Limpiar Sesión</button>
-        </div>
+<div class="modal fade" id="clearSessionModal" tabindex="-1" aria-labelledby="clearSessionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clearSessionModalLabel">Confirmar Limpieza de Sesión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas limpiar la sesión?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="clearSession()">Limpiar Sesión</button>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
 
 
 
