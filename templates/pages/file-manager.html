@@ -65,150 +65,109 @@
     background-color: #0056b3;
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   }
-
-  .modal-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-image {
-    width: 200px;
-    margin: 10px;
-  }
 </style>
 {% endblock %}
 
 {% block content %}
 {% if not file_name %}
 <div class="container-fluid py-4 px-5">
-  <div class="file-grid">
-    {% for file in page_obj %}
-    <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
-      <input type="checkbox" class="check-button" value="/media/{{ file.temp }}">
-      <div>
-        <strong>Archivo: </strong>{{ file.filename }}
-        <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
-      </div>
-      <div class="file-preview">
-        {% if file.filename|is_image %}
-        <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
-        {% else %}
-        <span>No es una imagen</span>
-        {% endif %}
-      </div>
-      <div class="actions">
-        <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
-          <i class="fa-solid fa-info text-success"></i>
-        </span>
-        <span class="icon" data-bs-target="#view-{{forloop.counter}}">
-          <a href="{% url 'file_manager' file.path %}">
-            <i class="fa-solid fa-eye text-primary"></i>
-          </a>
-        </span>
-      </div>
-    </div>
-    {% empty %}
-    <p>No hay archivos</p>
-    {% endfor %}
-  </div>
-  <div class="pagination">
-    {% if page_obj.has_previous %}
-    <a href="?page=1">Primera</a>
-    <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-    {% endif %}
-    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-    <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
-    {% endif %}
-  </div>
-  <div class="directory-list">
-    <h3>Carpetas</h3>
-    {% for directory in directories %}
-    <div class="directory-item">
-      <strong>Directory:</strong> {{ directory.name }}
-      <div><strong>Path:</strong> {{ directory.path }}</div>
-      <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
-    </div>
-    {% empty %}
-    <p>No hay directorios</p>
-    {% endfor %}
-  </div>
-  <div class="pagination">
-    {% if page_obj_dir.has_previous %}
-    <a href="?page_dir=1">Primera</a>
-    <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
-    {% endif %}
-    <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
-    {% if page_obj_dir.has_next %}
-    <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
-    <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
-    {% endif %}
-  </div>
-  {% else %}
-  <div class="container">
-    <div class="file-viewer">
-      {% if file_path %}
-      {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
-      <img src="/media/{{ temp }}" alt="{{ file_name }}">
-      {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
-      <video controls>
-        <source src="/media/{{ temp }}" type="video/mp4">
-      </video>
-      {% elif file_name|file_extension in ".pdf, .txt" %}
-      <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
-      {% elif file_name|file_extension in ".csv" %}
-      <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
-      {% endif %}
-      {% else %}
-      <p>No file selected.</p>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-  <button onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
-</div>
-
-<!-- Modal para mostrar las imágenes seleccionadas -->
-<div class="modal fade" id="selectedFilesModal" tabindex="-1" aria-labelledby="selectedFilesModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="selectedFilesModalLabel">Imágenes Seleccionadas</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="selectedFilesContainer" class="modal-content">
-          <!-- Aquí se mostrarán las imágenes seleccionadas -->
+  <form id="selectedFilesForm" method="POST" action="{% url 'view_selected_files' %}">
+    {% csrf_token %}
+    <div class="file-grid">
+      {% for file in page_obj %}
+      <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
+        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}">
+        <div>
+          <strong>Archivo: </strong>{{ file.filename }}
+          <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
+        </div>
+        <div class="file-preview">
+          {% if file.filename|is_image %}
+          <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
+          {% else %}
+          <span>No es una imagen</span>
+          {% endif %}
+        </div>
+        <div class="actions">
+          <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
+            <i class="fa-solid fa-info text-success"></i>
+          </span>
+          <span class="icon" data-bs-target="#view-{{forloop.counter}}">
+            <a href="{% url 'file_manager' file.path %}">
+              <i class="fa-solid fa-eye text-primary"></i>
+            </a>
+          </span>
         </div>
       </div>
+      {% empty %}
+      <p>No hay archivos</p>
+      {% endfor %}
     </div>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page=1">Primera</a>
+      <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+      {% endif %}
+    </div>
+    <div class="directory-list">
+      <h3>Carpetas</h3>
+      {% for directory in directories %}
+      <div class="directory-item">
+        <strong>Directory:</strong> {{ directory.name }}
+        <div><strong>Path:</strong> {{ directory.path }}</div>
+        <a href="{% url 'file_manager' directory.path %}" class="btn btn-primary btn-sm">Abrir</a>
+      </div>
+      {% empty %}
+      <p>No hay directorios</p>
+      {% endfor %}
+    </div>
+    <div class="pagination">
+      {% if page_obj_dir.has_previous %}
+      <a href="?page_dir=1">Primera</a>
+      <a href="?page_dir={{ page_obj_dir.previous_page_number }}">Anterior</a>
+      {% endif %}
+      <span>Página {{ page_obj_dir.number }} de {{ page_obj_dir.paginator.num_pages }}.</span>
+      {% if page_obj_dir.has_next %}
+      <a href="?page_dir={{ page_obj_dir.next_page_number }}">Siguiente</a>
+      <a href="?page_dir={{ page_obj_dir.paginator.num_pages }}">Última</a>
+      {% endif %}
+    </div>
+    <button type="button" onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
+  </form>
+</div>
+{% else %}
+<div class="container">
+  <div class="file-viewer">
+    {% if file_path %}
+    {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
+    <img src="/media/{{ temp }}" alt="{{ file_name }}">
+    {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
+    <video controls>
+      <source src="/media/{{ temp }}" type="video/mp4">
+    </video>
+    {% elif file_name|file_extension in ".pdf, .txt" %}
+    <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
+    {% elif file_name|file_extension in ".csv" %}
+    <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
+    {% endif %}
+    {% else %}
+    <p>No file selected.</p>
+    {% endif %}
   </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block extrascripts %}
 <script>
 function viewSelected() {
-    const selectedFiles = document.querySelectorAll('.check-button:checked');
-    const filePaths = [];
-    const selectedFilesContainer = document.getElementById('selectedFilesContainer');
-    selectedFilesContainer.innerHTML = ''; // Limpiar contenedor
-
-    selectedFiles.forEach(file => {
-        const filePath = file.value;
-        filePaths.push(filePath);
-
-        const img = document.createElement('img');
-        img.src = filePath;
-        img.classList.add('modal-image');
-        selectedFilesContainer.appendChild(img);
-    });
-
-    // Mostrar el modal
-    const modal = new bootstrap.Modal(document.getElementById('selectedFilesModal'));
-    modal.show();
+    const selectedFilesForm = document.getElementById('selectedFilesForm');
+    selectedFilesForm.submit();
 }
 </script>
 {% endblock %}

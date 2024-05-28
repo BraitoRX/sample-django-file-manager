@@ -1,0 +1,36 @@
+{% extends 'layouts/base.html' %}
+
+{% block extrastyle %}
+<style>
+  .selected-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  .selected-image-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+  .selected-image {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="selected-images-grid">
+    {% for file in selected_files %}
+    <div class="selected-image-item">
+      <img src="{{ file }}" alt="Selected Image" class="selected-image">
+    </div>
+    {% empty %}
+    <p>No se seleccionaron archivos.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

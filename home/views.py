@@ -8,6 +8,7 @@ from home.models import FileInfo
 from django.core.paginator import Paginator
 import tempfile
 from hdfs3 import HDFileSystem
+from django.shortcuts import render
 
 
 # Create your views here.
@@ -388,4 +389,11 @@ def file_detail(request, file_path=None):
 
 
 
+
+def view_selected_files(request):
+    if request.method == 'POST':
+        selected_files = request.POST.getlist('selected_files')
+        return render(request, 'pages/view_selected_files.html', {'selected_files': selected_files})
+    else:
+        return redirect('file_manager')
 
