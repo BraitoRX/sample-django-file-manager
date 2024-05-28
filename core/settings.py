@@ -179,8 +179,8 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': 'media/Temp/',
-        'TIMEOUT': 20,  
+        'LOCATION': BASE_DIR / 'media/Temp/',
+        'TIMEOUT': 86400,  # 24 horas en segundos
         'OPTIONS': {
             'MAX_ENTRIES': 1000  # Limita el número de entradas en la caché a 1000
         }
