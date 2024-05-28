@@ -2,8 +2,8 @@
 
 {% block extrastyle %}
 <style>
-  .selected-images-grid {
-    display: grid;
+  .selected-images {
+    display: inline-flex;
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="selected-images-grid">
+<div class="selected-images">
   {% for file in selected_files %}
   <div class="file-viewer">
     <img src="{{ file }}" alt="Selected Image" class="selected-image">
