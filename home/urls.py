@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('clear-session/', views.clear_session, name='clear_session'),
     path('view-selected-files/', views.view_selected_files, name='view_selected_files'),
     path('file-detail/<path:file_path>/', views.file_manager, name='file_detail'),
     path('file-detail/', views.file_manager, name='file_manager'),

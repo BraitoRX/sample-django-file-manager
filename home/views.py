@@ -413,7 +413,9 @@ def view_selected_files(request):
     else:
         return redirect('file_manager')
         
-
+def clear_session(request):
+    request.session.flush()
+    return redirect('file_manager')
 
 
 
