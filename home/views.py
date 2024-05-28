@@ -404,7 +404,7 @@ def view_selected_files(request):
             file_details.append({
                 'path': file_path,
                 'name': file_name,
-                'extension': file_extension,
+                'extension': file_extension
             })
         return render(request, 'pages/view_selected_files.html', {'file_details': file_details})
     else:
