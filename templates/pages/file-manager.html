@@ -229,7 +229,9 @@ block extrastyle %}
   hola mundo {{ request.session.person }} {{ request.session.selected_files }}
 </div>
 
-{% endblock %} {% block extrascripts %}
+{% endblock %} 
+
+{% block extrascripts %}
 <script>
   function viewSelected() {
     const selectedFilesForm = document.getElementById("selectedFilesForm");
