@@ -95,7 +95,10 @@ block extrastyle %}
     word-break: break-all; /* Permite que las palabras largas se dividan */
   }
 </style>
-{% endblock %} {% block content %} {% if not file_name %}
+{% endblock %} 
+{% block content %} 
+
+{% if not file_name %}
 <div class="container-fluid py-4 px-5">
   <form
     id="selectedFilesForm"
