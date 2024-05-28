@@ -352,7 +352,10 @@ def upload_file(request):
 def file_detail(request, file_path=None):
     if file_path is None:
         archivos = get_files_from_directory(settings.MEDIA_ROOT)
-        return render(request, 'pages/file_detail.html', {'files': archivos, 'selected_files': request.session.get('selected_files', [])})
+        return render(request, 'pages/file_detail.html', {
+            'files': archivos,
+            'selected_files': request.session.get('selected_files', [])
+        })
     else:
         file_path = file_path.replace('%slash%', '/')
 
@@ -412,5 +415,6 @@ def view_selected_files(request):
         return render(request, 'pages/view_selected_files.html', {'file_details': file_details})
     else:
         return redirect('file_manager')
+
 
 

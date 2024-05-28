@@ -3,54 +3,166 @@
 
 {% block extrastyle %}
 <style>
-  .modal {
-    z-index: 99999 !important;
+  .file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  .file-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    position: relative;
+    height: 100%;
+  }
+  .file-image {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+  }
+  .icon {
+    cursor: pointer;
+  }
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination a, .pagination span {
+    margin: 0 10px;
+  }
+  .check-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .view-all-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .view-all-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  }
+  .file-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+    overflow: auto;
+  }
+  .file-viewer img, .file-viewer video, .file-viewer iframe {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+  .file-viewer pre {
+    width: 100%;
+    max-height: 80vh;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #333;
+    color: #fff;
+    padding: 10px;
+  }
+  .file-info {
+    text-align: center;
+    margin-top: 10px;
+    word-break: break-all; /* Permite que las palabras largas se dividan */
   }
 </style>
-{% endblock extrastyle %}
+{% endblock %}
 
 {% block content %}
-
-
-{% if files || directories %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 mx-auto">
-            <h2 class="text-center mb-4">Archivos</h2>
-            <div class="list-group">
-                {% for file in files %}
-                <a href="{% url 'file_detail' file.file %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    {{ file.filename }}
-                </a>
-                {% endfor %}
-            </div>
+{% if not file_name %}
+<div class="container-fluid py-4 px-5">
+  <form id="selectedFilesForm" method="POST" action="{% url 'view_selected_files' %}">
+    {% csrf_token %}
+    <div class="file-grid">
+      {% for file in files %}
+      <div class="file-item" data-bs-toggle="tooltip" title="{{ file.path|info_value }}">
+        <input type="checkbox" class="check-button" name="selected_files" value="{{ file.path }}" 
+               {% if file.path in selected_files %}checked{% endif %}>
+        <div class="file-info">
+          <strong>Archivo: </strong>{{ file.name }}
+          <div><strong>Tipo: </strong>{{ file.name|file_extension|upper }}</div>
         </div>
+        <div class="file-preview">
+          {% if file.name|is_image %}
+          <img src="/media/{{ file.path }}" alt="{{ file.name }}" class="file-image">
+          {% else %}
+          <span>No es una imagen</span>
+          {% endif %}
+        </div>
+        <div class="actions">
+          <span class="icon" data-bs-toggle="modal" data-bs-target="#info-{{forloop.counter}}">
+            <i class="fa-solid fa-info text-success"></i>
+          </span>
+          <span class="icon" data-bs-target="#view-{{forloop.counter}}">
+            <a href="{% url 'file_manager' file.path %}">
+              <i class="fa-solid fa-eye text-primary"></i>
+            </a>
+          </span>
+        </div>
+      </div>
+      {% empty %}
+      <p>No hay archivos</p>
+      {% endfor %}
     </div>
+    <button type="button" onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
+  </form>
+</div>
+{% else %}
+<div class="container">
+  <div class="file-viewer">
+    {% if file_path %}
+    {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
+    <img src="/media/{{ file_path }}" alt="{{ file_name }}">
+    {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
+    <video controls>
+      <source src="/media/{{ file_path }}" type="video/mp4">
+    </video>
+    {% elif file_name|file_extension in ".pdf, .txt" %}
+    <iframe src="/media/{{ file_path }}" frameborder="0"></iframe>
+    {% elif file_name|file_extension in ".csv" %}
+    <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
+    {% endif %}
+    {% else %}
+    <p>No file selected.</p>
+    {% endif %}
+  </div>
 </div>
 {% endif %}
-
-{% if file_path %}
-    <!-- Código para mostrar un solo archivo -->
-  {% if file_extension in ".jpg, .png, .gif" %}
-    <img  src="/media/{{ file_path }}" alt="df">
-  {% elif file_extension in ".mp4, .webm, .ogg" %}
-    <video controls>
-      <source src="/media/{{file_path }}" type="video/mp4">
-    </video>
-  {% elif file_extension in ".pdf, .txt" %}
-    <iframe src="/media/{{ file_path }}" ></iframe>
-  {% elif file_extension in ".csv" %}
-    <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
-  {% endif %}
-
-{% endif %}
-
-{% endblock content %}
+{% endblock %}
 
 {% block extrascripts %}
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    $('#fileModal').modal('show');
-  });
+function viewSelected() {
+    const selectedFilesForm = document.getElementById('selectedFilesForm');
+    selectedFilesForm.submit();
+}
 </script>
-{% endblock extrascripts %}
+{% endblock %}
