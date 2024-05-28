@@ -173,3 +173,5 @@ LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
