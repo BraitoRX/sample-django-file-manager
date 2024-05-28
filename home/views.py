@@ -391,7 +391,7 @@ def view_selected_files(request):
     if request.method == 'POST':
         selected_files = request.POST.getlist('selected_files')
         context = {'selected_files': selected_files}
-        return render(request, 'selected_files.html', context)
+        return render(request, 'pages/selected_files.html', context)
     else:
         return redirect('file_manager')
     
