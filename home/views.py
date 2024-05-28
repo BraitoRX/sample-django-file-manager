@@ -385,7 +385,7 @@ def file_detail(request, file_path=None):
             print(' > files_in_folder ' + str(absolute_files))
 
         # Renderiza la plantilla para mostrar la lista de archivos en la carpeta
-        return render(request, 'pages/file_detail.html', {'files': absolute_files})
+        return render(request, 'pages/file_detail.html', {'files': absolute_files, 'selected_files': request.session.get('selected_files', [])})
 
 
 
@@ -393,16 +393,12 @@ def file_detail(request, file_path=None):
 def view_selected_files(request):
     if request.method == 'POST':
         selected_files = request.POST.getlist('selected_files')
-        request.session['selected_files'] = selected_files
-        request.session['person'] = {'name':'John','age':27}
-        print(request.session['person']) # {'name':'John','age':27}
-        print(request.session['person']['name']) # John
-        print(request.session['person']['age']) # 27
-        print(request.session.get('person')) # {'name':'John','age':27}
-        print(request.session.get('person')['name']) # John
-        print(request.session.get('person')['age']) # 27
-        print(request.session.get('animal')) # None
-        print(request.session.get('animal', "Doesn't exist")) # Doesn't exist
+        if 'selected_files' not in request.session:
+            request.session['selected_files'] = []
+        # Combina las listas y elimina duplicados
+        print(' > selected_files ' + str(selected_files))
+        request.session['selected_files'] = list(set(request.session['selected_files'] + selected_files))
+        request.session.modified = True  # Marca la sesión como modificada para guardar los cambios
         
         file_details = []
         for file_path in request.session['selected_files']:
