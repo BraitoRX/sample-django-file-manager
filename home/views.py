@@ -228,7 +228,7 @@ def file_manager(request, file_path=None, directory=None):
                 # Descarga el archivo de HDFS al directorio 'Temp'
                 hdfs.get(normalized_file_path, absolute_file_path)
                 # Guarda la ruta del archivo en la caché
-                cache.set(cache_key, absolute_file_path, timeout=86400)  # 86400 segundos = 24 horas
+                cache.set(cache_key, absolute_file_path, timeout=10)
 
             # Ruta relativa desde MEDIA_ROOT para mostrar en la interfaz
             relative_file_path = os.path.join('Temp', local_file_name)
