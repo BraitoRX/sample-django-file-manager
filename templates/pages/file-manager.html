@@ -88,6 +88,13 @@
     color: #fff;
     padding: 10px;
   }
+  .file-info {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    margin-top: 10px;
+  }
 </style>
 {% endblock %}
 
@@ -100,7 +107,7 @@
       {% for file in page_obj %}
       <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
         <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}">
-        <div>
+        <div class="file-info">
           <strong>Archivo: </strong>{{ file.filename }}
           <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
         </div>
