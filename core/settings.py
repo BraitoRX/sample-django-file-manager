@@ -180,7 +180,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': BASE_DIR / 'media/Temp/',
-        'TIMEOUT': 86400,  # 24 horas en segundos
+        'TIMEOUT': 10,  # 24 horas en segundos
         'OPTIONS': {
             'MAX_ENTRIES': 1000  # Limita el número de entradas en la caché a 1000
         }
