@@ -393,8 +393,10 @@ def file_detail(request, file_path=None):
 def view_selected_files(request):
     if request.method == 'POST':
         selected_files = request.POST.getlist('selected_files')
-        request.session['selected_files'] = request.session.get('selected_files', []) + selected_files
-        request.session['selected_files'] = list(set(request.session['selected_files']))  # Remove duplicates
+        if 'selected_files' not in request.session:
+            request.session['selected_files'] = []
+        request.session['selected_files'] = list(set(request.session['selected_files'] + selected_files))
+        request.session.modified = True  # Mark the session as modified to save changes
         file_details = []
         for file_path in request.session['selected_files']:
             file_name = file_path.split('/')[-1]
