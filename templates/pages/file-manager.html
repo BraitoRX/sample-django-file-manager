@@ -46,12 +46,14 @@
     top: 10px;
     right: 10px;
   }
-  .view-all-btn, .deselect-all-btn {
+  .view-all-btn {
     position: fixed;
     bottom: 20px;
+    right: 20px;
     z-index: 1000;
     padding: 10px 20px;
     font-size: 16px;
+    background-color: #007BFF;
     color: white;
     border: none;
     border-radius: 5px;
@@ -59,20 +61,8 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: background-color 0.3s, box-shadow 0.3s;
   }
-  .view-all-btn {
-    right: 20px;
-    background-color: #007BFF;
-  }
   .view-all-btn:hover {
     background-color: #0056b3;
-    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
-  }
-  .deselect-all-btn {
-    right: 160px;
-    background-color: #FF0000;
-  }
-  .deselect-all-btn:hover {
-    background-color: #b30000;
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   }
   .file-viewer {
@@ -101,7 +91,7 @@
   .file-info {
     text-align: center;
     margin-top: 10px;
-    word-break: break-all;
+    word-break: break-all; /* Permite que las palabras largas se dividan */
   }
 </style>
 {% endblock %}
@@ -114,9 +104,7 @@
     <div class="file-grid">
       {% for file in page_obj %}
       <div class="file-item" data-bs-toggle="tooltip" title="{{ file.file_path|info_value }}">
-        {% with full_path='/media/'|add:file.temp %}
-        <input type="checkbox" class="check-button" name="selected_files" value="{{ full_path }}" {% if full_path in request.session.selected_files %}checked{% endif %}>
-        {% endwith %}
+        <input type="checkbox" class="check-button" name="selected_files" value="/media/{{ file.temp }}">
         <div class="file-info">
           <strong>Archivo: </strong>{{ file.filename }}
           <div><strong>Tipo: </strong>{{ file.filename|file_extension|upper }}</div>
@@ -178,7 +166,6 @@
       {% endif %}
     </div>
     <button type="button" onclick="viewSelected()" class="view-all-btn">Ver Todos</button>
-    <button type="button" onclick="deselectAll()" class="deselect-all-btn">Deseleccionar Todos</button>
   </form>
 </div>
 {% else %}
@@ -209,11 +196,6 @@
 function viewSelected() {
     const selectedFilesForm = document.getElementById('selectedFilesForm');
     selectedFilesForm.submit();
-}
-
-function deselectAll() {
-    const checkboxes = document.querySelectorAll('.check-button');
-    checkboxes.forEach(checkbox => checkbox.checked = false);
 }
 </script>
 {% endblock %}
