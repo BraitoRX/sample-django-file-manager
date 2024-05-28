@@ -393,8 +393,10 @@ def file_detail(request, file_path=None):
 def view_selected_files(request):
     if request.method == 'POST':
         selected_files = request.POST.getlist('selected_files')
+        request.session['selected_files'] = request.session.get('selected_files', []) + selected_files
+        request.session['selected_files'] = list(set(request.session['selected_files']))  # Remove duplicates
         file_details = []
-        for file_path in selected_files:
+        for file_path in request.session['selected_files']:
             file_name = file_path.split('/')[-1]
             file_extension = file_name.split('.')[-1].upper()
             file_details.append({
@@ -405,5 +407,9 @@ def view_selected_files(request):
         return render(request, 'pages/view_selected_files.html', {'file_details': file_details})
     else:
         return redirect('file_manager')
+
+def clear_selected_files(request):
+    request.session['selected_files'] = []
+    return redirect('file_manager')
 
 
