@@ -1,3 +1,4 @@
+# home/management/commands/cleartemp.py
 
 from django.core.management.base import BaseCommand
 import os
@@ -10,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
         now = time.time()
-        cutoff = now - (24 * 60 * 60)  # 24 horas
+        cutoff = now - (60)  # 1 minuto
 
         for filename in os.listdir(temp_dir_path):
             file_path = os.path.join(temp_dir_path, filename)
