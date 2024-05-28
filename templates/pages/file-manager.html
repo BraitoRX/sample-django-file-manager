@@ -192,7 +192,8 @@
 {% endif %}
 <div>
   hola mundo
-  {{ selected_files }}
+  {{ request.session.person }}
+  {{ request.session.selected_files }}
 </div>
 
 {% endblock %}
