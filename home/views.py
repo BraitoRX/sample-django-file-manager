@@ -8,7 +8,8 @@ from home.models import FileInfo
 from django.core.paginator import Paginator
 import tempfile
 from hdfs3 import HDFileSystem
-
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -387,13 +388,38 @@ def file_detail(request, file_path=None):
         return render(request, 'pages/file_detail.html', {'files': absolute_files})
     
 
+@csrf_exempt
 def view_selected_files(request):
-    if request.method == 'POST':
-        selected_files = request.POST.getlist('selected_files')
-        context = {'selected_files': selected_files}
-        return render(request, 'pages/selected_files.html', context)
-    else:
-        return redirect('file_manager')
+    if request.method == "POST":
+        selected_files = request.POST.getlist('selected_files[]')
+        hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
+        temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
+
+        if not os.path.exists(temp_dir_path):
+            os.makedirs(temp_dir_path)
+
+        file_data = []
+
+        for file_path in selected_files:
+            normalized_file_path = file_path.replace('%slash%', '/')
+            local_file_name = os.path.basename(normalized_file_path)
+            file_extension = os.path.splitext(local_file_name)[1]
+            absolute_file_path = os.path.join(temp_dir_path, local_file_name)
+
+            hdfs.get(normalized_file_path, absolute_file_path)
+            relative_file_path = os.path.join('Temp', local_file_name)
+
+            file_info = {
+                'file_path': normalized_file_path,
+                'temp': relative_file_path,
+                'file_name': local_file_name,
+                'file_extension': file_extension,
+                'csv_text': convert_csv_to_text(absolute_file_path) if file_extension == '.csv' else None
+            }
+            file_data.append(file_info)
+
+        return render(request, 'pages/file-manager.html', {'selected_files': file_data, 'segment': 'file_manager'})
+    return HttpResponse(status=405)
     
 
 
