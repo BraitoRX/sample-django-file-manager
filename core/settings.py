@@ -175,11 +175,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-print('Base Dir:', BASE_DIR)
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': BASE_DIR / 'media/Temp/',
-        'TIMEOUT': 10,  # 24 horas en segundos
-    }
-}
+
+temp_dir_path = BASE_DIR / 'media/Temp/'
+temp_dir_path.mkdir(parents=True, exist_ok=True)

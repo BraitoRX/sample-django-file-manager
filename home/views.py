@@ -217,19 +217,14 @@ def file_manager(request, file_path=None, directory=None):
         else:
             local_file_name = os.path.basename(normalized_file_path)
             file_extension = os.path.splitext(local_file_name)[1]
-            # Ruta en la caché
-            cache_key = f'temp_file_{local_file_name}'
-            absolute_file_path = cache.get(cache_key)
+            # Ruta absoluta en el servidor donde se guardará temporalmente el archivo
+            absolute_file_path = os.path.join(temp_dir_path, local_file_name)
 
-            # Si el archivo no está en la caché, descárgalo y guárdalo en la caché
-            if not absolute_file_path:
-                # Ruta absoluta en el servidor donde se guardará temporalmente el archivo
-                absolute_file_path = os.path.join(temp_dir_path, local_file_name)
-                # Descarga el archivo de HDFS al directorio 'Temp'
-                hdfs.get(normalized_file_path, absolute_file_path)
-                # Guarda la ruta del archivo en la caché
-                cache.set(cache_key, absolute_file_path, timeout=10)
-
+            # Descarga el archivo de HDFS al directorio 'Temp'
+            hdfs.get(normalized_file_path, absolute_file_path)
+            # Guardar la hora de creación del archivo para futura referencia
+            os.utime(absolute_file_path, None)
+            
             # Ruta relativa desde MEDIA_ROOT para mostrar en la interfaz
             relative_file_path = os.path.join('Temp', local_file_name)
 
