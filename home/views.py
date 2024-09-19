@@ -217,32 +217,30 @@ def file_manager(request, file_path=None, directory=None):
         else:
             local_file_name = os.path.basename(normalized_file_path)
             file_extension = os.path.splitext(local_file_name)[1]
-            # Ruta absoluta en el servidor donde se guardará temporalmente el archivo
             absolute_file_path = os.path.join(temp_dir_path, local_file_name)
 
-            # Descarga el archivo de HDFS al directorio 'Temp'
             hdfs.get(normalized_file_path, absolute_file_path)
-            # Guardar la hora de creación del archivo para futura referencia
             os.utime(absolute_file_path, None)
             
-            # Ruta relativa desde MEDIA_ROOT para mostrar en la interfaz
             relative_file_path = os.path.join('Temp', local_file_name)
 
+            parent_directory = os.path.dirname(normalized_file_path)
+            parent_directory_name = os.path.basename(parent_directory)
+
             try:
-                # Procesa el archivo dependiendo de su tipo
                 if file_extension in ['.txt', '.csv', '.png', '.mp4','.mp3' ,'.wav','.opus', '.tts', ".jpg", ".jpeg", ".ogg", ".m4a"]:
                     return render(request, 'pages/file-manager.html', {
                         'file_path': normalized_file_path,
                         'temp': relative_file_path,
                         'file_name': local_file_name,
                         'csv_text': None if file_extension != '.csv' else convert_csv_to_text(absolute_file_path),
-                        'file_extension': file_extension
+                        'file_extension': file_extension,
+                        'parent_directory': parent_directory,
+                        'parent_directory_name': parent_directory_name
                     })
                 else:
-                    # Maneja otros tipos de archivos o muestra un mensaje si el formato no es soportado
                     return HttpResponse('Formato de archivo no soportado.', status=415)
             except IOError:
-                # Si hay un error al abrir o leer el archivo
                 return HttpResponse('Error al abrir o leer el archivo.', status=500)
 
 

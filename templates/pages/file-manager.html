@@ -194,21 +194,28 @@
 </div>
 {% else %}
 <div class="container">
+  {% if file_path %}
+    <div class="mb-3">
+      <a href="{% url 'file_manager' parent_directory %}" class="btn btn-primary">
+        Volver a {{ parent_directory_name }}
+      </a>
+    </div>
+  {% endif %}
   <div class="file-viewer">
     {% if file_path %}
-    {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
-    <img src="/media/{{ temp }}" alt="{{ file_name }}">
-    {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav, .mp3, .opus, .tts, .m4a" %}
-    <video controls>
-      <source src="/media/{{ temp }}" type="video/mp4">
-    </video>
-    {% elif file_name|file_extension in ".pdf, .txt" %}
-    <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
-    {% elif file_name|file_extension in ".csv" %}
-    <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
-    {% endif %}
+      {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
+        <img src="/media/{{ temp }}" alt="{{ file_name }}">
+      {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav, .mp3, .opus, .tts, .m4a" %}
+        <video controls>
+          <source src="/media/{{ temp }}" type="video/mp4">
+        </video>
+      {% elif file_name|file_extension in ".pdf, .txt" %}
+        <iframe src="/media/{{ temp }}" frameborder="0"></iframe>
+      {% elif file_name|file_extension in ".csv" %}
+        <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
+      {% endif %}
     {% else %}
-    <p>No file selected.</p>
+      <p>No file selected.</p>
     {% endif %}
   </div>
 </div>
