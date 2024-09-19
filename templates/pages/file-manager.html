@@ -147,6 +147,7 @@
 {% if not file_name %}
 <div class="container-fluid py-4 px-5">
   <form id="selectedFilesForm" method="POST" action="{% url 'view_selected_files' %}">
+    <input type="hidden" name="current_directory" value="{{ selected_directory }}">
     {% csrf_token %}
     <div class="file-grid">
       {% for file in page_obj %}
@@ -295,6 +296,12 @@
 <script>
 function viewSelected() {
     const selectedFilesForm = document.getElementById('selectedFilesForm');
+    // Asegurarse de que al menos un archivo esté seleccionado
+    const selectedFiles = selectedFilesForm.querySelectorAll('input[name="selected_files"]:checked');
+    if (selectedFiles.length === 0) {
+        alert('Por favor, selecciona al menos un archivo.');
+        return;
+    }
     selectedFilesForm.submit();
 }
 function clearSession() {

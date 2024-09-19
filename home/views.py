@@ -412,15 +412,15 @@ def file_detail(request, file_path=None):
 def view_selected_files(request):
     if request.method == 'POST':
         selected_files = request.POST.getlist('selected_files')
+        current_directory = request.POST.get('current_directory', '/')
+        
         if 'selected_files' not in request.session:
             request.session['selected_files'] = []
-        # Combina las listas y elimina duplicados
-        print(' > selected_files ' + str(selected_files))
+        
         request.session['selected_files'] = list(set(request.session['selected_files'] + selected_files))
-        request.session.modified = True  # Marca la sesión como modificada para guardar los cambios
+        request.session.modified = True
         
         file_details = []
-        parent_directory = None
         for file_path in request.session['selected_files']:
             file_name = file_path.split('/')[-1]
             file_extension = file_name.split('.')[-1].upper()
@@ -429,11 +429,9 @@ def view_selected_files(request):
                 'name': file_name,
                 'extension': file_extension
             })
-            # Obtener el directorio padre del primer archivo (asumimos que todos están en el mismo directorio)
-            if parent_directory is None:
-                parent_directory = os.path.dirname(file_path)
         
-        parent_directory_name = os.path.basename(parent_directory) if parent_directory else "Directorio raíz"
+        parent_directory = os.path.dirname(current_directory)
+        parent_directory_name = os.path.basename(parent_directory) if parent_directory != '/' else "Directorio raíz"
         
         return render(request, 'pages/view_selected_files.html', {
             'file_details': file_details,
