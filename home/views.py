@@ -414,6 +414,7 @@ def view_selected_files(request):
         request.session.modified = True  # Marca la sesión como modificada para guardar los cambios
         
         file_details = []
+        parent_directory = None
         for file_path in request.session['selected_files']:
             file_name = file_path.split('/')[-1]
             file_extension = file_name.split('.')[-1].upper()
@@ -422,7 +423,17 @@ def view_selected_files(request):
                 'name': file_name,
                 'extension': file_extension
             })
-        return render(request, 'pages/view_selected_files.html', {'file_details': file_details})
+            # Obtener el directorio padre del primer archivo (asumimos que todos están en el mismo directorio)
+            if parent_directory is None:
+                parent_directory = os.path.dirname(file_path)
+        
+        parent_directory_name = os.path.basename(parent_directory) if parent_directory else "Directorio raíz"
+        
+        return render(request, 'pages/view_selected_files.html', {
+            'file_details': file_details,
+            'parent_directory': parent_directory,
+            'parent_directory_name': parent_directory_name
+        })
     else:
         return redirect('file_manager')
         
