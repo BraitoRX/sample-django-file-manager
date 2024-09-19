@@ -365,42 +365,48 @@ def upload_file(request):
 def file_detail(request, file_path=None):
     if file_path is None:
         archivos = get_files_from_directory(settings.MEDIA_ROOT)
-        return render(request, 'pages/file_detail.html', {'files': archivos, 'selected_files': request.session.get('selected_files', [])})
+        return render(request, 'pages/file_detail.html', {
+            'files': archivos, 
+            'selected_files': request.session.get('selected_files', []),
+            'parent_directory': None,
+            'parent_directory_name': "Directorio raíz"
+        })
     
     else:
         file_path = file_path.replace('%slash%', '/')
-
-        # Construye la ruta absoluta del archivo
         absolute_file_path = os.path.abspath(os.path.join(settings.MEDIA_ROOT, file_path))
 
-        # Verifica si el archivo existe
         if not os.path.exists(absolute_file_path):
             raise Http404
 
-        # Obtén el nombre real del archivo
         file_name = os.path.basename(file_path)
+        parent_directory = os.path.dirname(file_path)
+        parent_directory_name = os.path.basename(parent_directory) if parent_directory else "Directorio raíz"
 
-        # Si es un archivo, renderiza la plantilla para mostrar ese archivo
         if os.path.isfile(absolute_file_path):
-            # Obtén la información del archivo si es un archivo CSV
             csv_text = ''
             if file_name.endswith('.csv'):
                 csv_text = convert_csv_to_text(absolute_file_path)
-                print(' > csv_text ' + csv_text)
 
-            return render(request, 'pages/file_detail.html', {'file_path': file_path, 'file_name': file_name, 'csv_text': csv_text, 'file_extension': os.path.splitext(file_name)[1],'selected_files': request.session.get('selected_files', [])})
-
+            return render(request, 'pages/file_detail.html', {
+                'file_path': file_path, 
+                'file_name': file_name, 
+                'csv_text': csv_text, 
+                'file_extension': os.path.splitext(file_name)[1],
+                'selected_files': request.session.get('selected_files', []),
+                'parent_directory': parent_directory,
+                'parent_directory_name': parent_directory_name
+            })
         
         if os.path.isdir(absolute_file_path):
-            
-            # Convertir las rutas relativas de los archivos en rutas absolutas
             absolute_files = get_files_from_directory(absolute_file_path)
-            print(' > files_in_folder ' + str(absolute_files))
 
-        # Renderiza la plantilla para mostrar la lista de archivos en la carpeta
-        return render(request, 'pages/file_detail.html', {'files': absolute_files, 'selected_files': request.session.get('selected_files', [])})
-
-
+        return render(request, 'pages/file_detail.html', {
+            'files': absolute_files, 
+            'selected_files': request.session.get('selected_files', []),
+            'parent_directory': parent_directory,
+            'parent_directory_name': parent_directory_name
+        })
 
 
 def view_selected_files(request):
