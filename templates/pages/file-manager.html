@@ -2,6 +2,7 @@
 {% load static file_extension info_value %}
 
 {% block extrastyle %}
+{{ block.super }}
 <style>
   .file-grid {
     display: grid;
@@ -48,7 +49,7 @@
   }
   .view-all-btn {
     position: fixed;
-    bottom: 80px; /* Ajusta esta distancia según sea necesario */
+    bottom: 80px;
     right: 20px;
     z-index: 1000;
     padding: 10px 20px;
@@ -67,7 +68,7 @@
   }
   .clear-session-btn {
     position: fixed;
-    bottom: 20px; /* Ajusta esta distancia según sea necesario */
+    bottom: 20px;
     right: 20px;
     z-index: 1000;
     padding: 10px 20px;
@@ -84,7 +85,34 @@
     background-color: #CC0000;
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
   }
+  .file-viewer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .back-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .back-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .back-button:hover {
+    background-color: #0056b3;
+  }
   .file-viewer {
+    width: 100%;
+    max-width: 800px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -193,10 +221,10 @@
   </form>
 </div>
 {% else %}
-<div class="container">
+<div class="file-viewer-container">
   {% if file_path %}
-    <div class="mb-3">
-      <a href="{% url 'file_manager' parent_directory %}" class="btn btn-primary">
+    <div class="back-button-container">
+      <a href="{% url 'file_manager' parent_directory %}" class="back-button">
         Volver a {{ parent_directory_name }}
       </a>
     </div>
