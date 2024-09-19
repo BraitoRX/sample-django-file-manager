@@ -35,10 +35,36 @@
     text-align: center;
     margin-top: 10px;
   }
+  .back-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .back-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .back-button:hover {
+    background-color: #0056b3;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
+{% if parent_directory %}
+  <div class="back-button-container">
+    <a href="{% url 'file_manager' parent_directory %}" class="back-button">
+      Volver a {{ parent_directory_name }}
+    </a>
+  </div>
+{% endif %}
 <div class="selected-images">
   {% for file in file_details %}
   <div class="file-viewer">
