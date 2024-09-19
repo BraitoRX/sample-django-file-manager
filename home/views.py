@@ -430,13 +430,13 @@ def view_selected_files(request):
                 'extension': file_extension
             })
         
-        parent_directory = os.path.dirname(current_directory)
-        parent_directory_name = os.path.basename(parent_directory) if parent_directory != '/' else "Directorio raíz"
+        return_directory = current_directory
+        return_directory_name = os.path.basename(current_directory) if current_directory != '/' else "Directorio raíz"
         
         return render(request, 'pages/view_selected_files.html', {
             'file_details': file_details,
-            'parent_directory': parent_directory,
-            'parent_directory_name': parent_directory_name
+            'return_directory': return_directory,
+            'return_directory_name': return_directory_name
         })
     else:
         return redirect('file_manager')
