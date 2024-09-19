@@ -230,7 +230,7 @@ def file_manager(request, file_path=None, directory=None):
 
             try:
                 # Procesa el archivo dependiendo de su tipo
-                if file_extension in ['.txt', '.csv', '.png', '.mp4','.mp3' ,'.wav','.opus', '.tts', ".jpg", ".jpeg", ".ogg"]:
+                if file_extension in ['.txt', '.csv', '.png', '.mp4','.mp3' ,'.wav','.opus', '.tts', ".jpg", ".jpeg", ".ogg", ".m4a"]:
                     return render(request, 'pages/file-manager.html', {
                         'file_path': normalized_file_path,
                         'temp': relative_file_path,
