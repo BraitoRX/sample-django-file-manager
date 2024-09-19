@@ -198,7 +198,7 @@
     {% if file_path %}
     {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
     <img src="/media/{{ temp }}" alt="{{ file_name }}">
-    {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav" %}
+    {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav, .mp3, .opus" %}
     <video controls>
       <source src="/media/{{ temp }}" type="video/mp4">
     </video>
