@@ -216,7 +216,7 @@ def file_manager(request, file_path=None, directory=None):
             })
         else:
             local_file_name = os.path.basename(normalized_file_path)
-            file_extension = os.path.splitext(local_file_name)[1]
+            file_extension = os.path.splitext(local_file_name)[1].lower()
             absolute_file_path = os.path.join(temp_dir_path, local_file_name)
 
             hdfs.get(normalized_file_path, absolute_file_path)
@@ -228,7 +228,12 @@ def file_manager(request, file_path=None, directory=None):
             parent_directory_name = os.path.basename(parent_directory)
 
             try:
-                if file_extension in ['.txt', '.csv', '.png', '.mp4','.mp3' ,'.wav','.opus', '.tts', ".jpg", ".jpeg", ".ogg", ".m4a"]:
+                supported_extensions = [
+                    '.txt', '.csv', '.pdf', '.png', '.jpg', '.jpeg', '.mp4', '.mp3', '.wav', '.opus', '.ogg', '.m4a',
+                    '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.odt', '.ods', '.odp', '.rtf'
+                ]
+                
+                if file_extension in supported_extensions:
                     return render(request, 'pages/file-manager.html', {
                         'file_path': normalized_file_path,
                         'temp': relative_file_path,
@@ -242,78 +247,6 @@ def file_manager(request, file_path=None, directory=None):
                     return HttpResponse('Formato de archivo no soportado.', status=415)
             except IOError:
                 return HttpResponse('Error al abrir o leer el archivo.', status=500)
-
-
-
-def show_file_content(request, file_path=None):
-
-    # Crea el directorio 'Temp' dentro de MEDIA_ROOT si no existe
-    temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp')
-    if not os.path.exists(temp_dir_path):
-        os.makedirs(temp_dir_path)
-
-    hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
-
-    # Si no hay una ruta de archivo especificada, muestra el directorio raíz
-    if file_path is None:
-        archivos, directorios = get_files_from_directory_hdfs(hdfs, "/")
-        return render(request, 'pages/file_detail.html', {'files': archivos, 'directories': directorios})
-
-    # Normaliza la ruta del archivo reemplazando '%slash%' por '/'
-    normalized_file_path = file_path.replace('%slash%', '/')
-
-    # Intenta obtener información sobre el archivo o directorio
-    try:
-        file_info = hdfs.info(normalized_file_path)
-    except FileNotFoundError:
-        raise Http404('El archivo o directorio solicitado no existe.')
-
-
-
-
-
-    # Si es un directorio, obtén los archivos y directorios dentro de él
-    if file_info['kind'] == 'directory':
-        archivos, directorios = get_files_from_directory_hdfs(hdfs, normalized_file_path)
-
-        print(' > archivos ' + str(archivos))
-
-        
-        return render(request, 'pages/file_detail.html', {'files': archivos, 'directories': directorios})
-
-    # Trata el caso de que sea un archivo
-
-    local_file_name = os.path.basename(normalized_file_path)
-    file_extension = os.path.splitext(local_file_name)[1]
-
-
-
-    # Ruta absoluta en el servidor donde se guardará temporalmente el archivo
-    absolute_file_path = os.path.join(temp_dir_path, local_file_name)
-
-    # Descarga el archivo de HDFS al directorio 'Temp'
-    hdfs.get(normalized_file_path, absolute_file_path)
-    # Ruta relativa desde MEDIA_ROOT para mostrar en la interfaz
-    relative_file_path = os.path.join('Temp', local_file_name)
-
-    try:
-        # Procesa el archivo dependiendo de su tipo
-        if file_extension in ['.txt', '.csv', '.png', '.mp4', 'wav', ".jpg"]:
-            return render(request, 'pages/file_detail.html', {
-                'file_path': normalized_file_path,
-                'temp': relative_file_path,
-                'file_name': local_file_name,
-                'csv_text': None if file_extension != '.csv' else convert_csv_to_text(absolute_file_path),
-                'file_extension': file_extension
-            })
-        else:
-            # Maneja otros tipos de archivos o muestra un mensaje si el formato no es soportado
-            return HttpResponse('Formato de archivo no soportado.', status=415)
-    except IOError:
-        # Si hay un error al abrir o leer el archivo
-        return HttpResponse('Error al abrir o leer el archivo.', status=500)
-    
-
 
 def generate_nested_directory(root_path, current_path):
     directories = []
