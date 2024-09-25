@@ -145,6 +145,15 @@
   .directory-list {
     margin-top: 20px;
   }
+
+  .word-preview {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+  }
 </style>
 {% endblock %}
 
@@ -238,30 +247,28 @@
       {% endif %}
       <div class="file-viewer">
         {% if file_path %}
-          {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
-            <img src="/media/{{ temp }}" alt="{{ file_name }}">
-          {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav, .mp3, .opus, .tts, .m4a" %}
-            <video controls>
-              <source src="/media/{{ temp }}" type="video/mp4">
-            </video>
-          {% elif file_name|file_extension in ".pdf, .txt, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .odt, .ods, .odp, .rtf" %}
-            {% if file_name|file_extension in ".pdf" %}
-              <iframe src="/media/{{ temp }}" frameborder="0" width="100%" height="100%"></iframe>
-            {% elif file_name|file_extension in ".txt, .rtf" %}
-              <iframe src="/media/{{ temp }}" frameborder="0" width="100%" height="100%"></iframe>
-            {% else %}
-              <p>Este tipo de archivo ({{ file_name|file_extension }}) no se puede previsualizar directamente. 
-              <a href="/media/{{ temp }}" download>Haga clic aquí para descargar el archivo</a>.</p>
-            {% endif %}
-          {% elif file_name|file_extension in ".csv" %}
-            <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
-          {% else %}
-            <p>Este tipo de archivo ({{ file_name|file_extension }}) no se puede previsualizar. 
-            <a href="/media/{{ temp }}" download>Haga clic aquí para descargar el archivo</a>.</p>
-          {% endif %}
+        {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
+          <img src="/media/{{ temp }}" alt="{{ file_name }}">
+        {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav, .mp3, .opus, .tts, .m4a" %}
+          <video controls>
+            <source src="/media/{{ temp }}" type="video/mp4">
+          </video>
+        {% elif file_name|file_extension in ".pdf, .txt, .rtf" %}
+          <iframe src="/media/{{ temp }}" frameborder="0" width="100%" height="100%"></iframe>
+        {% elif file_name|file_extension in ".doc, .docx" %}
+          <div id="word-preview" class="word-preview">Cargando documento...</div>
+        {% elif file_name|file_extension in ".xls, .xlsx, .ppt, .pptx, .odt, .ods, .odp" %}
+          <p>Este tipo de archivo ({{ file_name|file_extension }}) no se puede previsualizar directamente. 
+          <a href="/media/{{ temp }}" download>Haga clic aquí para descargar el archivo</a>.</p>
+        {% elif file_name|file_extension in ".csv" %}
+          <pre class="bg-dark text-light p-3">{{ csv_text }}</pre>
         {% else %}
-          <p>No file selected.</p>
+          <p>Este tipo de archivo ({{ file_name|file_extension }}) no se puede previsualizar. 
+          <a href="/media/{{ temp }}" download>Haga clic aquí para descargar el archivo</a>.</p>
         {% endif %}
+      {% else %}
+        <p>No file selected.</p>
+      {% endif %}
       </div>
     </div>
   {% endif %}
@@ -310,7 +317,10 @@
 {% endblock %}
 
 {% block extrascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.0/mammoth.browser.min.js"></script>
 <script>
+
+  
 function viewSelected() {
     const selectedFilesForm = document.getElementById('selectedFilesForm');
     // Asegurarse de que al menos un archivo esté seleccionado
@@ -336,6 +346,26 @@ function clearSession() {
       }
   });
 }
+
+function previewWordDocument() {
+    const fileExtension = '{{ file_name|file_extension }}';
+    if (fileExtension === '.doc' || fileExtension === '.docx') {
+        fetch('/media/{{ temp }}')
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => {
+                mammoth.convertToHtml({arrayBuffer: arrayBuffer})
+                    .then(result => {
+                        document.getElementById("word-preview").innerHTML = result.value;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        document.getElementById("word-preview").innerHTML = "Error al cargar el documento.";
+                    });
+            });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', previewWordDocument);
 
 // Close other modals when opening a new one
 document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
