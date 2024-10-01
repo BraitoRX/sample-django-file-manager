@@ -248,38 +248,6 @@ def file_manager(request, file_path=None, directory=None):
             except IOError:
                 return HttpResponse('Error al abrir o leer el archivo.', status=500)
 
-
-def download_file(request, file_path):
-    hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
-    
-    # Asegúrate de que el archivo existe en HDFS
-    if not hdfs.exists(file_path):
-        raise Http404("El archivo no existe.")
-
-    # Obtener el nombre del archivo
-    file_name = os.path.basename(file_path)
-
-    # Crear un archivo temporal para almacenar el contenido del archivo HDFS
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        # Descargar el archivo de HDFS al archivo temporal
-        hdfs.get(file_path, temp_file.name)
-        
-        # Abrir el archivo temporal en modo binario
-        with open(temp_file.name, 'rb') as file:
-            # Determinar el tipo MIME del archivo
-            content_type, _ = mimetypes.guess_type(file_name)
-            if content_type is None:
-                content_type = 'application/octet-stream'
-
-            # Crear la respuesta con el contenido del archivo
-            response = HttpResponse(file.read(), content_type=content_type)
-            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-            
-            # Eliminar el archivo temporal después de enviarlo
-            os.unlink(temp_file.name)
-            
-            return response
-        
 def generate_nested_directory(root_path, current_path):
     directories = []
     for name in os.listdir(current_path):
