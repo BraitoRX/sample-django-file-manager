@@ -299,16 +299,6 @@ def delete_file(request, file_path):
     return redirect(request.META.get('HTTP_REFERER'))
 
     
-def download_file(request, file_path):
-    path = file_path.replace('%slash%', '/')
-    absolute_file_path = os.path.join(settings.MEDIA_ROOT, path)
-    if os.path.exists(absolute_file_path):
-        with open(absolute_file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(absolute_file_path)
-            return response
-    raise Http404
-
 def upload_file(request):
     media_path = os.path.join(settings.MEDIA_ROOT)
     selected_directory = request.POST.get('directory', '') 
