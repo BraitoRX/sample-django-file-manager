@@ -409,7 +409,19 @@ function previewWordDocument() {
                 return response.arrayBuffer();
             })
             .then(arrayBuffer => {
-                console.log("Archivo recuperado, convirtiendo a HTML...");
+                console.log("Archivo recuperado, tamaño:", arrayBuffer.byteLength, "bytes");
+                
+                // Verificar las primeras bytes del archivo
+                const header = new Uint8Array(arrayBuffer.slice(0, 4));
+                const headerHex = Array.from(header, b => b.toString(16).padStart(2, '0')).join('');
+                console.log("Primeros 4 bytes del archivo (hex):", headerHex);
+                
+                // Los archivos .docx deben comenzar con estos bytes: 50 4B 03 04
+                if (headerHex !== '504b0304') {
+                    throw new Error("El archivo no parece ser un documento Word válido.");
+                }
+
+                console.log("Convirtiendo a HTML...");
                 return mammoth.convertToHtml({arrayBuffer: arrayBuffer});
             })
             .then(result => {
