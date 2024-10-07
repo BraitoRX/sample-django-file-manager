@@ -14,12 +14,79 @@
     display: flex;
     flex-direction: column;
   }
-  .file-viewer-container {
+  .file-grid-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .file-item {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 100px); /* Ajusta esto según el espacio que necesites para otros elementos */
-    padding: 20px;
-    box-sizing: border-box;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    position: relative;
+    height: 100%;
+  }
+  .file-image {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+  }
+  .icon {
+    cursor: pointer;
+  }
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination a, .pagination span {
+    margin: 0 10px;
+  }
+  .check-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .view-all-btn, .clear-session-btn {
+    position: fixed;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .view-all-btn {
+    bottom: 80px;
+    background-color: #007BFF;
+  }
+  .view-all-btn:hover {
+    background-color: #0056b3;
+  }
+  .clear-session-btn {
+    bottom: 20px;
+    background-color: #FF0000;
+  }
+  .clear-session-btn:hover {
+    background-color: #CC0000;
   }
   .back-button-container {
     width: 100%;
@@ -39,6 +106,13 @@
   }
   .back-button:hover {
     background-color: #0056b3;
+  }
+  .file-viewer-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+    padding: 20px;
+    box-sizing: border-box;
   }
   .file-viewer {
     flex-grow: 1;
@@ -91,7 +165,8 @@
   }
   .preview-title {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
     font-weight: bold;
   }
   .word-preview, .excel-preview {
