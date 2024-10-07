@@ -377,7 +377,7 @@ from django.http import JsonResponse
 def get_ruta_destino(request, charla, no_caso, no_prueba, ambiente):
     query = f"""
     SELECT id, charla, adjunto, ruta_metadata, ruta_destino, transcripcion, clasificacion, no_caso, no_prueba, ambiente
-    FROM adjuntos_ext_ufdr
+    FROM transit_analisisforense.adjuntos_ext_ufdr
     WHERE charla='{charla}' AND no_caso='{no_caso}' AND no_prueba='{no_prueba}' AND ambiente='{ambiente}'
     """
     
