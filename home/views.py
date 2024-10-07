@@ -11,7 +11,7 @@ from hdfs3 import HDFileSystem
 from django.shortcuts import render
 from django.core.cache import cache
 import mimetypes
-
+from static.py.conectar_db_impala import executeQueryComp
 # Create your views here.
 
 def index(request):
@@ -367,6 +367,34 @@ def view_selected_files(request):
 def clear_session(request):
     request.session.flush()
     return redirect('file_manager')
+
+
+import pandas as pd
+from impala.dbapi import connect
+from urllib.parse import unquote
+
+def get_ruta_destino(charla, no_caso, no_prueba, ambiente):
+    query = f"""
+    SELECT id, charla, adjunto, ruta_metadata, ruta_destino, transcripcion, clasificacion, no_caso, no_prueba, ambiente
+    FROM adjuntos_ext_ufdr
+    WHERE charla='{charla}' AND no_caso='{no_caso}' AND no_prueba='{no_prueba}' AND ambiente='{ambiente}'
+    """
+    
+    df = executeQueryComp(query)
+    
+    if df.empty:
+        print("No se encontraron resultados para los parámetros proporcionados.")
+        return []
+    
+    
+    rutas_destino = df['ruta_destino'].apply(lambda x: unquote(x.split('/')[-1]) if pd.notnull(x) else None).tolist()
+    
+    print(f"Se encontraron {len(rutas_destino)} rutas de destino:")
+    for ruta in rutas_destino:
+        print(ruta)
+    
+    return rutas_destino
+    
 
 
 

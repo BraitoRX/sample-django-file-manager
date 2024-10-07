@@ -3,6 +3,8 @@ gunicorn
 python-dotenv
 whitenoise
 django-admin-corporate==1.0.1
+impala
+pandas
 
 # psycopg2-binary
 # mysqlclient
