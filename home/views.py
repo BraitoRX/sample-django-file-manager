@@ -17,7 +17,8 @@ from django.template.defaultfilters import filesizeformat
 
 FILE_CATEGORIES = {
     'image': {'.jpg', '.png', '.jpeg', '.gif'},
-    'video_audio': {'.mp4', '.webm', '.ogg', '.wav', '.mp3', '.opus', '.tts', '.m4a'},
+    'video': {'.mp4', '.webm'},
+    'audio': {'.ogg', '.wav', '.mp3', '.opus', '.m4a'},
     'document': {'.pdf', '.txt', '.rtf'},
     'word': {'.doc', '.docx'},
     'excel': {'.xls', '.xlsx'},
