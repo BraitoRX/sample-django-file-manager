@@ -386,11 +386,10 @@ def get_ruta_destino(request, charla, no_caso, no_prueba, ambiente):
     if df.empty:
         return JsonResponse({"error": "No se encontraron resultados para los parámetros proporcionados."}, status=404)
     
-    # Extraer y decodificar las rutas de destino
-    rutas_destino = df['ruta_destino'].apply(lambda x: unquote(x.split('/')[-1]) if pd.notnull(x) else None).tolist()
+    # Extraer las rutas de destino completas
+    rutas_destino = df['ruta_destino'].apply(lambda x: unquote(x) if pd.notnull(x) else None).tolist()
     
     return JsonResponse({"rutas_destino": rutas_destino})
-    
 
 
 
