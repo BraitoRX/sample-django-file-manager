@@ -278,19 +278,10 @@
     <div class="file-viewer">
       {% if file_category == 'image' %}
         <img src="/media/{{ temp }}" alt="{{ file_name }}" style="max-width: 100%; max-height: calc(100vh - 100px); object-fit: contain;">
-      {% elif file_category == 'video' %}
+      {% elif file_category == 'video_audio' %}
         <video controls style="max-width: 100%; max-height: calc(100vh - 100px);">
-          <source src="/media/{{ temp }}" type="video/{{ file_extension|slice:'1:' }}">
-          Tu navegador no soporta el elemento de video.
+          <source src="/media/{{ temp }}" type="video/mp4">
         </video>
-      {% elif file_category == 'audio' %}
-        <audio controls style="width: 100%; max-width: 800px;">
-          {% for ext in file_categories.audio %}
-            <source src="/media/{{ temp }}" type="audio/{{ ext|slice:'1:' }}">
-          {% endfor %}
-          Tu navegador no soporta el elemento de audio.
-        </audio>
-        <p>Si no puedes reproducir el audio, <a href="/media/{{ temp }}" download>descárgalo aquí</a>.</p>
       {% elif file_category == 'document' %}
         <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
       {% elif file_category == 'word' %}
@@ -319,7 +310,7 @@
   {% else %}
     <p>No file selected.</p>
   {% endif %}
-
+  
   </div>
   {% endif %}
 </div>
@@ -366,10 +357,7 @@
 {% endfor %}
 {% endblock %}
 
-
 {% block extrascripts %}
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 <script>
