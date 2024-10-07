@@ -9,31 +9,96 @@
   }
   .file-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
   }
   .file-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .file-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   }
   .file-image {
     width: 100%;
-    height: 150px;
-    object-fit: contain;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 6px;
     margin-bottom: 10px;
   }
+  .file-info {
+    font-size: 0.9em;
+    color: #555;
+  }
+  .file-name {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .actions {
+    margin-top: 10px;
+  }
+  .actions a {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
   .pagination {
-    margin-top: 20px;
+    margin-top: 30px;
     display: flex;
     justify-content: center;
+    align-items: center;
+  }
+  .pagination a, .pagination span {
+    margin: 0 5px;
+    padding: 8px 12px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    color: #007bff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  .pagination a:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  .pagination .current-page {
+    background-color: #007bff;
+    color: white;
   }
   .file-viewer-container {
     padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
   }
   .file-viewer {
-    max-width: 800px;
-    margin: 0 auto;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .file-viewer img, .file-viewer video {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+  .file-viewer pre {
+    background-color: #f1f3f5;
+    padding: 15px;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 </style>
 {% endblock %}
@@ -45,20 +110,22 @@
       <div class="file-grid">
         {% for file in page_obj %}
         <div class="file-item">
+          <div class="file-name">{{ file.filename }}</div>
           <div class="file-info">
-            <strong>Archivo: </strong>{{ file.filename }}
-            <div><strong>Tipo: </strong>{{ file.file_extension|upper }}</div>
+            <strong>Tipo: </strong>{{ file.file_extension|upper }}
           </div>
           <div class="file-preview">
-            {% if file.file_extension in '.jpg,.jpeg,.png,.gif' %}
+            {% if file.file_extension|lower in '.jpg,.jpeg,.png,.gif,.webp' %}
             <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
             {% else %}
-            <span>No preview available</span>
+            <div class="file-image" style="display: flex; align-items: center; justify-content: center; background-color: #f1f3f5;">
+              <i class="fa-solid fa-file fa-3x" style="color: #007bff;"></i>
+            </div>
             {% endif %}
           </div>
           <div class="actions">
             <a href="{% url 'file_manager' file.file %}">
-              <i class="fa-solid fa-eye text-primary"></i> Ver
+              <i class="fa-solid fa-eye"></i> Ver
             </a>
           </div>
         </div>
@@ -68,13 +135,21 @@
       </div>
       <div class="pagination">
         {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; Primera</a>
-        <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+          <a href="?page=1" title="Primera página">&laquo;&laquo;</a>
+          <a href="?page={{ page_obj.previous_page_number }}" title="Página anterior">&laquo;</a>
         {% endif %}
-        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        
+        {% for num in page_obj.paginator.page_range %}
+          {% if num == page_obj.number %}
+            <span class="current-page">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        
         {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+          <a href="?page={{ page_obj.next_page_number }}" title="Página siguiente">&raquo;</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}" title="Última página">&raquo;&raquo;</a>
         {% endif %}
       </div>
     </div>
@@ -82,20 +157,20 @@
   <div class="file-viewer-container">
     <h2>{{ file_name }}</h2>
     <div class="file-viewer">
-      {% if file_extension in '.jpg,.jpeg,.png,.gif' %}
+      {% if file_extension|lower in '.jpg,.jpeg,.png,.gif,.webp' %}
         <img src="/media/{{ temp }}" alt="{{ file_name }}" style="max-width: 100%;">
       {% elif file_extension in '.mp4,.webm,.ogg' %}
         <video controls style="max-width: 100%;">
           <source src="/media/{{ temp }}" type="video/{{ file_extension|cut:'.' }}">
         </video>
       {% elif file_extension in '.mp3,.wav,.opus' %}
-        <audio controls>
+        <audio controls style="width: 100%;">
           <source src="/media/{{ temp }}" type="audio/{{ file_extension|cut:'.' }}">
         </audio>
       {% elif file_extension == '.pdf' %}
-        <iframe src="/media/{{ temp }}" style="width: 100%; height: 600px;"></iframe>
+        <iframe src="/media/{{ temp }}" style="width: 100%; height: 600px; border: none;"></iframe>
       {% elif file_extension in '.txt,.csv' %}
-        <pre style="white-space: pre-wrap; word-wrap: break-word;">{{ file_content }}</pre>
+        <pre>{{ file_content }}</pre>
       {% else %}
         <p>No se puede previsualizar este tipo de archivo.</p>
       {% endif %}
