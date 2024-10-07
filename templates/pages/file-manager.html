@@ -183,12 +183,6 @@
 </style>
 {% endblock %}
 
-{% block extrahead %}
-  {{ block.super }}
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.3/plyr.css" />
-  <script src="https://cdn.plyr.io/3.7.3/plyr.polyfilled.js"></script>
-{% endblock %}
-
 {% block content %}
 <div class="full-height-container">
   {% if not file_name %}
@@ -296,6 +290,7 @@
           {% endfor %}
           Tu navegador no soporta el elemento de audio.
         </audio>
+        <p>Si no puedes reproducir el audio, <a href="/media/{{ temp }}" download>descárgalo aquí</a>.</p>
       {% elif file_category == 'document' %}
         <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
       {% elif file_category == 'word' %}
@@ -373,20 +368,6 @@
 
 
 {% block extrascripts %}
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var audioElement = document.querySelector('audio');
-    if (audioElement) {
-      audioElement.addEventListener('error', function(e) {
-        console.error('Error loading audio:', e);
-        console.log('Audio src:', this.currentSrc);
-        console.log('Audio error code:', this.error.code);
-        this.parentNode.innerHTML += '<p>Error al cargar el audio. Por favor, intenta descargarlo.</p>';
-      });
-    }
-  });
-  </script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.0/mammoth.browser.min.js"></script>
