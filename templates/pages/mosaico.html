@@ -1,0 +1,113 @@
+{% extends 'layouts/base.html' %}
+{% load static file_extension info_value %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .file-grid-container {
+    padding: 20px;
+  }
+  .file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .file-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+  .file-image {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .file-viewer-container {
+    padding: 20px;
+  }
+  .file-viewer {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if not file_name %}
+    <div class="file-grid-container">
+      <div class="file-grid">
+        {% for file in page_obj %}
+        <div class="file-item">
+          <div class="file-info">
+            <strong>Archivo: </strong>{{ file.filename }}
+            <div><strong>Tipo: </strong>{{ file.file_extension|upper }}</div>
+          </div>
+          <div class="file-preview">
+            {% if file.file_extension in '.jpg,.jpeg,.png,.gif' %}
+            <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
+            {% else %}
+            <span>No preview available</span>
+            {% endif %}
+          </div>
+          <div class="actions">
+            <a href="{% url 'file_manager' file.file %}">
+              <i class="fa-solid fa-eye text-primary"></i> Ver
+            </a>
+          </div>
+        </div>
+        {% empty %}
+        <p>No hay archivos</p>
+        {% endfor %}
+      </div>
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; Primera</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+        {% endif %}
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+  <div class="file-viewer-container">
+    <h2>{{ file_name }}</h2>
+    <div class="file-viewer">
+      {% if file_extension in '.jpg,.jpeg,.png,.gif' %}
+        <img src="/media/{{ temp }}" alt="{{ file_name }}" style="max-width: 100%;">
+      {% elif file_extension in '.mp4,.webm,.ogg' %}
+        <video controls style="max-width: 100%;">
+          <source src="/media/{{ temp }}" type="video/{{ file_extension|cut:'.' }}">
+        </video>
+      {% elif file_extension in '.mp3,.wav,.opus' %}
+        <audio controls>
+          <source src="/media/{{ temp }}" type="audio/{{ file_extension|cut:'.' }}">
+        </audio>
+      {% elif file_extension == '.pdf' %}
+        <iframe src="/media/{{ temp }}" style="width: 100%; height: 600px;"></iframe>
+      {% elif file_extension in '.txt,.csv' %}
+        <pre style="white-space: pre-wrap; word-wrap: break-word;">{{ file_content }}</pre>
+      {% else %}
+        <p>No se puede previsualizar este tipo de archivo.</p>
+      {% endif %}
+    </div>
+    <a href="{% url 'file_manager' %}" class="btn btn-primary mt-3">Volver al listado</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extrascripts %}
+<script>
+  // Aquí puedes añadir cualquier JavaScript adicional si es necesario
+</script>
+{% endblock %}

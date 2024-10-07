@@ -393,8 +393,56 @@ def get_ruta_destino(request, charla, no_caso, no_prueba, ambiente):
         parts = decoded_url.split('//')
         return '/' + parts[-1] if len(parts) > 1 else decoded_url
 
-    rutas_destino = df['ruta_destino'].apply(extract_path_after_double_slash).tolist()
+    df['ruta_destino'] = df['ruta_destino'].apply(extract_path_after_double_slash)
     
-    return JsonResponse({"rutas_destino": rutas_destino})
+    # Configurar HDFS
+    hdfs = HDFileSystem(host='hadoop-ann1.fiscalia.col', port=8020)
+    
+    # Crear el directorio 'anexos' dentro de 'Temp' si no existe
+    temp_dir_path = os.path.join(settings.MEDIA_ROOT, 'Temp', 'anexos')
+    if not os.path.exists(temp_dir_path):
+        os.makedirs(temp_dir_path)
 
+    # Procesar solo archivos
+    archivos = []
+    for _, file in df.iterrows():
+        hdfs_path = file['ruta_destino']
+        try:
+            file_info = hdfs.info(hdfs_path)
+            if file_info['kind'] == 'file':
+                local_file_name = os.path.basename(hdfs_path)
+                local_file_path = os.path.join('Temp', 'anexos', local_file_name)
+                absolute_file_path = os.path.join(temp_dir_path, local_file_name)
+                
+                # Copiar el archivo desde HDFS
+                hdfs.get(hdfs_path, absolute_file_path)
+                os.utime(absolute_file_path, None)  # Actualizar la fecha de modificación
+
+                file_extension = os.path.splitext(local_file_name)[1].lower()
+                archivos.append({
+                    'file': hdfs_path,
+                    'filename': local_file_name,
+                    'file_extension': file_extension,
+                    'temp': local_file_path
+                })
+        except Exception as e:
+            print(f"Error al procesar el archivo {hdfs_path}: {str(e)}")
+
+    # Configurar la paginación
+    paginator = Paginator(archivos, 20)  # 20 archivos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'files': page_obj,
+        'page_obj': page_obj,
+        'selected_directory': "/",
+        'segment': 'file_manager',
+        'charla': charla,
+        'no_caso': no_caso,
+        'no_prueba': no_prueba,
+        'ambiente': ambiente
+    }
+    
+    return render(request, 'pages/mosaico.html', context)
 
