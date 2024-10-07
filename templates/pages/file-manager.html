@@ -285,9 +285,12 @@
         </video>
       {% elif file_category == 'audio' %}
         <audio controls style="width: 100%; max-width: 800px;">
-          <source src="/media/{{ temp }}" type="audio/{{ file_extension|slice:'1:' }}">
+          {% for ext in file_categories.audio %}
+            <source src="/media/{{ temp }}" type="audio/{{ ext|slice:'1:' }}">
+          {% endfor %}
           Tu navegador no soporta el elemento de audio.
         </audio>
+        <p>Si no puedes reproducir el audio, <a href="/media/{{ temp }}" download>descárgalo aquí</a>.</p>
       {% elif file_category == 'document' %}
         <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
       {% elif file_category == 'word' %}
@@ -363,7 +366,24 @@
 {% endfor %}
 {% endblock %}
 
+
 {% block extrascripts %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var audioElement = document.querySelector('audio');
+    if (audioElement) {
+      audioElement.addEventListener('error', function(e) {
+        console.error('Error loading audio:', e);
+        console.log('Audio src:', this.currentSrc);
+        console.log('Audio error code:', this.error.code);
+        this.parentNode.innerHTML += '<p>Error al cargar el audio. Por favor, intenta descargarlo.</p>';
+      });
+    }
+  });
+  </script>
+
+  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 <script>
