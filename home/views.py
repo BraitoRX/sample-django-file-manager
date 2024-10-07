@@ -372,8 +372,9 @@ def clear_session(request):
 import pandas as pd
 from impala.dbapi import connect
 from urllib.parse import unquote
+from django.http import JsonResponse
 
-def get_ruta_destino(charla, no_caso, no_prueba, ambiente):
+def get_ruta_destino(request, charla, no_caso, no_prueba, ambiente):
     query = f"""
     SELECT id, charla, adjunto, ruta_metadata, ruta_destino, transcripcion, clasificacion, no_caso, no_prueba, ambiente
     FROM adjuntos_ext_ufdr
@@ -383,17 +384,12 @@ def get_ruta_destino(charla, no_caso, no_prueba, ambiente):
     df = executeQueryComp(query)
     
     if df.empty:
-        print("No se encontraron resultados para los parámetros proporcionados.")
-        return []
+        return JsonResponse({"error": "No se encontraron resultados para los parámetros proporcionados."}, status=404)
     
-    
+    # Extraer y decodificar las rutas de destino
     rutas_destino = df['ruta_destino'].apply(lambda x: unquote(x.split('/')[-1]) if pd.notnull(x) else None).tolist()
     
-    print(f"Se encontraron {len(rutas_destino)} rutas de destino:")
-    for ruta in rutas_destino:
-        print(ruta)
-    
-    return rutas_destino
+    return JsonResponse({"rutas_destino": rutas_destino})
     
 
 

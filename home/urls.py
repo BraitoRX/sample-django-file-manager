@@ -12,5 +12,5 @@ urlpatterns = [
     path('delete-file/<str:file_path>/', views.delete_file, name='delete_file'),
     path('upload-file/', views.upload_file, name='upload_file'),
     path('save-info/<str:file_path>/', views.save_info, name='save_info'),
-    path('anexos/<str:charla>/<str:no_caso>/<str:no_prueba>/<str:ambiente>/', views.anexos, name='anexos'),
+    path('anexos/<str:charla>/<str:no_caso>/<str:no_prueba>/<str:ambiente>/', views.get_ruta_destino, name='anexos'),
 ]
