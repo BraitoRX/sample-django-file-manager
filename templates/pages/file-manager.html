@@ -278,10 +278,16 @@
     <div class="file-viewer">
       {% if file_category == 'image' %}
         <img src="/media/{{ temp }}" alt="{{ file_name }}" style="max-width: 100%; max-height: calc(100vh - 100px); object-fit: contain;">
-      {% elif file_category == 'video_audio' %}
+      {% elif file_category == 'video' %}
         <video controls style="max-width: 100%; max-height: calc(100vh - 100px);">
-          <source src="/media/{{ temp }}" type="video/mp4">
+          <source src="/media/{{ temp }}" type="video/{{ file_extension|slice:'1:' }}">
+          Tu navegador no soporta el elemento de video.
         </video>
+      {% elif file_category == 'audio' %}
+        <audio controls style="width: 100%; max-width: 800px;">
+          <source src="/media/{{ temp }}" type="audio/{{ file_extension|slice:'1:' }}">
+          Tu navegador no soporta el elemento de audio.
+        </audio>
       {% elif file_category == 'document' %}
         <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
       {% elif file_category == 'word' %}
@@ -310,7 +316,7 @@
   {% else %}
     <p>No file selected.</p>
   {% endif %}
-  
+
   </div>
   {% endif %}
 </div>
