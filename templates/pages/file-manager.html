@@ -299,7 +299,6 @@
             <source src="/media/{{ temp }}" type="audio/{{ file_extension|slice:'1:' }}">
           </audio>
         </div>
-        <p>Si no puedes reproducir o controlar el audio, <a href="/media/{{ temp }}" download>descárgalo aquí</a>.</p>
       {% elif file_category == 'document' %}
         <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
       {% elif file_category == 'word' %}
