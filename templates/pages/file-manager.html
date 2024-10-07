@@ -274,37 +274,43 @@
         </a>
       </div>
     {% endif %}
+    {% if file_path %}
     <div class="file-viewer">
-      {% if file_path %}
-        {% if file_name|file_extension in ".jpg, .png, .jpeg, .gif" %}
-          <img src="/media/{{ temp }}" alt="{{ file_name }}" style="max-width: 100%; max-height: calc(100vh - 100px); object-fit: contain;">
-        {% elif file_name|file_extension in ".mp4, .webm, .ogg, .wav, .mp3, .opus, .tts, .m4a" %}
-          <video controls style="max-width: 100%; max-height: calc(100vh - 100px);">
-            <source src="/media/{{ temp }}" type="video/mp4">
-          </video>
-        {% elif file_name|file_extension in ".pdf, .txt, .rtf" %}
-          <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
-        {% elif file_name|file_extension in ".doc, .docx" %}
-          <div class="preview-container">
-            <div class="preview-title">Vista previa de Word: {{ file_name }}</div>
-            <div id="word-preview" class="word-preview">Cargando documento Word...</div>
-          </div>
-        {% elif file_name|file_extension in ".xls, .xlsx" %}
-          <div class="preview-container">
-            <div class="preview-title">Vista previa de Excel: {{ file_name }}</div>
-            <div id="excel-preview" class="excel-preview">Cargando hoja de cálculo...</div>
-          </div>
-        {% elif file_name|file_extension in ".ppt, .pptx, .odt, .ods, .odp" %}
-          <p>Este tipo de archivo ({{ file_name|file_extension }}) no se puede previsualizar directamente.</p>
-        {% elif file_name|file_extension in ".csv" %}
-          <pre class="bg-dark text-light p-3" style="width: 100%; max-width: 800px; overflow: auto;">{{ csv_text }}</pre>
-        {% else %}
-          <p>Este tipo de archivo ({{ file_name|file_extension }}) no se puede previsualizar.</p>
-        {% endif %}
+      {% if file_category == 'image' %}
+        <img src="/media/{{ temp }}" alt="{{ file_name }}" style="max-width: 100%; max-height: calc(100vh - 100px); object-fit: contain;">
+      {% elif file_category == 'video_audio' %}
+        <video controls style="max-width: 100%; max-height: calc(100vh - 100px);">
+          <source src="/media/{{ temp }}" type="video/mp4">
+        </video>
+      {% elif file_category == 'document' %}
+        <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
+      {% elif file_category == 'word' %}
+        <div class="preview-container">
+          <div class="preview-title">Vista previa de Word: {{ file_name }}</div>
+          <div id="word-preview" class="word-preview">Cargando documento Word...</div>
+        </div>
+      {% elif file_category == 'excel' %}
+        <div class="preview-container">
+          <div class="preview-title">Vista previa de Excel: {{ file_name }}</div>
+          <div id="excel-preview" class="excel-preview">Cargando hoja de cálculo...</div>
+        </div>
+      {% elif file_category == 'presentation' %}
+        <p>Este tipo de archivo ({{ file_extension }}) no se puede previsualizar directamente.</p>
+      {% elif file_category == 'csv' %}
+        <pre class="bg-dark text-light p-3" style="width: 100%; max-width: 800px; overflow: auto;">{{ csv_text }}</pre>
       {% else %}
-        <p>No file selected.</p>
+        <p>Este tipo de archivo ({{ file_extension }}) no se puede previsualizar.</p>
       {% endif %}
     </div>
+    <div class="file-info">
+      <p><strong>Nombre:</strong> {{ file_name }}</p>
+      <p><strong>Tamaño:</strong> {{ file_size }}</p>
+      <p><strong>Tipo:</strong> {{ file_category|title }}</p>
+    </div>
+  {% else %}
+    <p>No file selected.</p>
+  {% endif %}
+  
   </div>
   {% endif %}
 </div>

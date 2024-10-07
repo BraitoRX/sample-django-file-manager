@@ -12,6 +12,22 @@ from django.shortcuts import render
 from django.core.cache import cache
 import mimetypes
 from static.py.conectar_db_impala import executeQueryComp
+from django.template.defaultfilters import filesizeformat
+
+
+FILE_CATEGORIES = {
+    'image': {'.jpg', '.png', '.jpeg', '.gif'},
+    'video_audio': {'.mp4', '.webm', '.ogg', '.wav', '.mp3', '.opus', '.tts', '.m4a'},
+    'document': {'.pdf', '.txt', '.rtf'},
+    'word': {'.doc', '.docx'},
+    'excel': {'.xls', '.xlsx'},
+    'presentation': {'.ppt', '.pptx', '.odt', '.ods', '.odp'},
+    'csv': {'.csv'}
+}
+
+SUPPORTED_EXTENSIONS = set().union(*FILE_CATEGORIES.values())
+
+
 # Create your views here.
 
 def index(request):
@@ -228,21 +244,22 @@ def file_manager(request, file_path=None, directory=None):
             parent_directory_name = os.path.basename(parent_directory)
 
             try:
-                supported_extensions = [
-                    '.txt', '.csv', '.pdf', '.png', '.jpg', '.jpeg', '.mp4', '.mp3', '.wav', '.opus', '.ogg', '.m4a',
-                    '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.odt', '.ods', '.odp', '.rtf'
-                ]
-                
-                if file_extension in supported_extensions:
-                    return render(request, 'pages/file-manager.html', {
+                if file_extension in SUPPORTED_EXTENSIONS:
+                    file_category = next((cat for cat, exts in FILE_CATEGORIES.items() if file_extension in exts), None)
+                    context = {
                         'file_path': normalized_file_path,
                         'temp': relative_file_path,
                         'file_name': local_file_name,
-                        'csv_text': None if file_extension != '.csv' else convert_csv_to_text(absolute_file_path),
                         'file_extension': file_extension,
+                        'file_category': file_category,
+                        'file_size': filesizeformat(os.path.getsize(absolute_file_path)),
                         'parent_directory': parent_directory,
-                        'parent_directory_name': parent_directory_name
-                    })
+                        'parent_directory_name': parent_directory_name,
+                        'file_categories': FILE_CATEGORIES
+                    }
+                    if file_extension == '.csv':
+                        context['csv_text'] = convert_csv_to_text(absolute_file_path)
+                    return render(request, 'pages/file-manager.html', context)
                 else:
                     return HttpResponse('Formato de archivo no soportado.', status=415)
             except IOError:
