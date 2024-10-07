@@ -285,7 +285,7 @@
         </video>
       {% elif file_category == 'audio' %}
         <audio controls style="width: 100%; max-width: 800px;">
-          <source src="/media/{{ temp }}" type="audio/{{ file_extension|slice:'1:' }}">
+          <source src="/media/{{ temp }}">
           Tu navegador no soporta el elemento de audio.
         </audio>
       {% elif file_category == 'document' %}
