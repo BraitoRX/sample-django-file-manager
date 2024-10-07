@@ -286,8 +286,8 @@
       {% elif file_category == 'audio' %}
       <audio controls style="width: 100%; max-width: 800px;" id="audio-player">
         <source src="/media/{{ temp }}" type="audio/{{ file_extension|slice:'1:' }}">
-        <source src="/media/{{ temp }}" type="audio/ogg"> <!-- Intenta con tipo ogg para .opus -->
-        <source src="/media/{{ temp }}" type="audio/mpeg"> <!-- Fallback para otros tipos -->
+        <source src="/media/{{ temp }}" type="audio/ogg"> 
+        <source src="/media/{{ temp }}" type="audio/mpeg"> 
         Tu navegador no soporta el elemento de audio.
       </audio>
       <div id="audio-fallback" style="display: none;">
