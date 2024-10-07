@@ -5,6 +5,7 @@ whitenoise
 django-admin-corporate==1.0.1
 impala
 pandas
+impyla
 
 # psycopg2-binary
 # mysqlclient
