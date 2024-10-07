@@ -429,7 +429,13 @@ def get_ruta_destino(request, charla, no_caso, no_prueba, ambiente):
             print(f"Error al procesar el archivo {hdfs_path}: {str(e)}")
 
     # Configurar la paginación
-    paginator = Paginator(archivos, 20)  # 20 archivos por página
+    items_per_page = request.GET.get('items_per_page', 20)  # Valor por defecto: 20
+    try:
+        items_per_page = int(items_per_page)
+    except ValueError:
+        items_per_page = 20
+
+    paginator = Paginator(archivos, items_per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -441,7 +447,8 @@ def get_ruta_destino(request, charla, no_caso, no_prueba, ambiente):
         'charla': charla,
         'no_caso': no_caso,
         'no_prueba': no_prueba,
-        'ambiente': ambiente
+        'ambiente': ambiente,
+        'items_per_page': items_per_page,
     }
     
     return render(request, 'pages/mosaico.html', context)

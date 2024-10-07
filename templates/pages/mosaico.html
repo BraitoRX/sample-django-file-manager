@@ -34,6 +34,10 @@
     background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
   .file-item:hover {
     transform: translateY(-5px);
@@ -50,6 +54,9 @@
     object-fit: cover;
     border-radius: 6px;
     margin-bottom: 10px;
+  }
+  .btn-view {
+    margin-top: auto;
   }
   .pagination {
     margin-top: 30px;
@@ -76,6 +83,10 @@
   }
   .file-viewer { max-width: 100%; margin-top: 20px; }
   .file-viewer img, .file-viewer video, .file-viewer audio { max-width: 100%; }
+  .items-per-page-form {
+    margin-bottom: 20px;
+    text-align: right;
+  }
 </style>
 {% endblock %}
 
@@ -91,6 +102,17 @@
   </div>
 
   {% if not file_name %}
+    <div class="items-per-page-form">
+      <form method="get" action="">
+        <label for="items_per_page">Registros por página:</label>
+        <select name="items_per_page" id="items_per_page" onchange="this.form.submit()">
+          <option value="20" {% if items_per_page == 20 %}selected{% endif %}>20</option>
+          <option value="50" {% if items_per_page == 50 %}selected{% endif %}>50</option>
+          <option value="100" {% if items_per_page == 100 %}selected{% endif %}>100</option>
+        </select>
+      </form>
+    </div>
+
     <div class="file-grid">
       {% for file in page_obj %}
         <div class="file-item">
@@ -103,7 +125,7 @@
               <i class="fa-solid fa-file fa-3x" style="color: #007bff;"></i>
             </div>
           {% endif %}
-          <a href="{% url 'file_manager' file.file %}" class="btn btn-primary btn-sm mt-2">Ver</a>
+          <a href="{% url 'file_manager' file.file %}" class="btn btn-primary btn-sm mt-2 btn-view">Ver</a>
         </div>
       {% empty %}
         <p>No hay archivos</p>
@@ -111,19 +133,19 @@
     </div>
     <div class="pagination">
       {% if page_obj.has_previous %}
-        <a href="?page=1" title="Primera página">&laquo;&laquo;</a>
-        <a href="?page={{ page_obj.previous_page_number }}" title="Página anterior">&laquo;</a>
+        <a href="?page=1&items_per_page={{ items_per_page }}" title="Primera página">&laquo;&laquo;</a>
+        <a href="?page={{ page_obj.previous_page_number }}&items_per_page={{ items_per_page }}" title="Página anterior">&laquo;</a>
       {% endif %}
       {% for num in page_obj.paginator.page_range %}
         {% if num == page_obj.number %}
           <span class="current-page">{{ num }}</span>
         {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-          <a href="?page={{ num }}">{{ num }}</a>
+          <a href="?page={{ num }}&items_per_page={{ items_per_page }}">{{ num }}</a>
         {% endif %}
       {% endfor %}
       {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" title="Página siguiente">&raquo;</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}" title="Última página">&raquo;&raquo;</a>
+        <a href="?page={{ page_obj.next_page_number }}&items_per_page={{ items_per_page }}" title="Página siguiente">&raquo;</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}&items_per_page={{ items_per_page }}" title="Última página">&raquo;&raquo;</a>
       {% endif %}
     </div>
   {% else %}
@@ -142,7 +164,7 @@
       {% else %}
         <p>No se puede previsualizar este tipo de archivo.</p>
       {% endif %}
-      <a href="{% url 'file_manager' %}" class="btn btn-primary mt-3">Volver al listado</a>
+      <a href="{% url 'file_manager' %}?items_per_page={{ items_per_page }}" class="btn btn-primary mt-3">Volver al listado</a>
     </div>
   {% endif %}
 </div>
