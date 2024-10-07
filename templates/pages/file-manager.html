@@ -398,18 +398,30 @@ function clearSession() {
 function previewWordDocument() {
     const fileExtension = '{{ file_name|file_extension }}';
     if (fileExtension === '.doc' || fileExtension === '.docx') {
+        const previewElement = document.getElementById("word-preview");
+        previewElement.innerHTML = "Intentando cargar el documento Word...";
+
         fetch('/media/{{ temp }}')
-            .then(response => response.arrayBuffer())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.arrayBuffer();
+            })
             .then(arrayBuffer => {
-                mammoth.convertToHtml({arrayBuffer: arrayBuffer})
-                    .then(result => {
-                        document.getElementById("word-preview").innerHTML = result.value;
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        document.getElementById("word-preview").innerHTML = "Error al cargar el documento Word.";
-                    });
+                console.log("Archivo recuperado, convirtiendo a HTML...");
+                return mammoth.convertToHtml({arrayBuffer: arrayBuffer});
+            })
+            .then(result => {
+                console.log("Conversión exitosa, mostrando contenido...");
+                previewElement.innerHTML = result.value;
+            })
+            .catch(error => {
+                console.error("Error al cargar el documento Word:", error);
+                previewElement.innerHTML = `Error al cargar el documento Word: ${error.message}`;
             });
+    } else {
+        console.log("No es un archivo Word válido");
     }
 }
 
