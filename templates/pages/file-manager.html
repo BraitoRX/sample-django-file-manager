@@ -180,10 +180,6 @@
     font-size: 1.2em;
     font-weight: bold;
   }
-    .plyr__container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
 </style>
 {% endblock %}
 
@@ -293,12 +289,13 @@
           <source src="/media/{{ temp }}" type="video/{{ file_extension|slice:'1:' }}">
           Tu navegador no soporta el elemento de video.
         </video>
-        {% elif file_category == 'audio' %}
-        <div class="plyr__container">
-          <audio class="js-plyr" crossorigin>
-            <source src="/media/{{ temp }}" type="audio/{{ file_extension|slice:'1:' }}">
-          </audio>
-        </div>
+      {% elif file_category == 'audio' %}
+        <audio controls style="width: 100%; max-width: 800px;">
+          {% for ext in file_categories.audio %}
+            <source src="/media/{{ temp }}" type="audio/{{ ext|slice:'1:' }}">
+          {% endfor %}
+          Tu navegador no soporta el elemento de audio.
+        </audio>
       {% elif file_category == 'document' %}
         <iframe src="/media/{{ temp }}" frameborder="0" style="width: 100%; height: calc(100vh - 100px);"></iframe>
       {% elif file_category == 'word' %}
@@ -379,34 +376,17 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const players = Plyr.setup('.js-plyr', {
-      controls: [
-        'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'download'
-      ]
-    });
-
-    players.forEach(player => {
-      player.on('ready', event => {
-        const instance = event.detail.plyr;
-        console.log('Plyr is ready', instance);
+    var audioElement = document.querySelector('audio');
+    if (audioElement) {
+      audioElement.addEventListener('error', function(e) {
+        console.error('Error loading audio:', e);
+        console.log('Audio src:', this.currentSrc);
+        console.log('Audio error code:', this.error.code);
+        this.parentNode.innerHTML += '<p>Error al cargar el audio. Por favor, intenta descargarlo.</p>';
       });
-
-      player.on('loadedmetadata', () => {
-        console.log('Audio metadata loaded. Duration:', player.duration);
-      });
-
-      player.on('canplay', () => {
-        console.log('Audio can start playing');
-      });
-
-      player.on('error', (event) => {
-        console.error('Plyr error:', event);
-        const errorElement = player.elements.container.nextElementSibling;
-        errorElement.textContent = 'Error al cargar el audio. Por favor, intenta descargarlo.';
-      });
-    });
+    }
   });
-</script>
+  </script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.0/mammoth.browser.min.js"></script>
