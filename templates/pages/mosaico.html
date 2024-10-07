@@ -33,12 +33,24 @@
     border: 1px solid #ddd;
     padding: 10px;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+  .file-name {
+    font-weight: bold;
+    word-break: break-word;
+    margin-bottom: 5px;
   }
   .file-image {
     width: 100%;
     height: 150px;
     object-fit: cover;
     margin-bottom: 10px;
+  }
+  .file-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
   .pagination {
     margin-top: 20px;
@@ -69,8 +81,10 @@
     <div class="file-grid">
       {% for file in page_obj %}
       <div class="file-item">
-        <div><strong>{{ file.filename }}</strong></div>
-        <div>Tipo: {{ file.file_extension|upper }}</div>
+        <div class="file-info">
+          <div class="file-name">{{ file.filename }}</div>
+          <div>Tipo: {{ file.file_extension|upper }}</div>
+        </div>
         {% if file.file_extension|lower in '.jpg,.jpeg,.png,.gif,.webp' %}
           <img src="/media/{{ file.temp }}" alt="{{ file.filename }}" class="file-image">
         {% else %}
